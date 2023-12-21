@@ -4,65 +4,93 @@ import React from "react";
 import DropDown, { TextareaComponent } from "./DropDown";
 import Editor from "@monaco-editor/react";
 import { Button } from "../ui/button";
+import parse, { domToReact } from "html-react-parser";
+import type { DOMNode, HTMLReactParserOptions } from "html-react-parser";
+import { Element } from "html-react-parser";
+
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
+
+const replaceClassesAndIds = (htmlString: string) => {
+  // let newHtml = htmlString.replace(/class="[^"]*"/g, "");
+  // newHtml = newHtml.replace(/id="[^"]*"/g, "");
+
+  // newHtml = newHtml.replace(/<td>/g, "<td class='border border-gray-400'>");
+
+  return htmlString;
+  // return newHtml;
+};
+
+const html = `
+<div><div>After a success of the previous Vasechkin’s program that allowed to calculate the results of the elections in cause of two days Artemy Sidorovich was placed at the head of the department. At the moment Artemy Sidorovich prepares a task for his subordinate&nbsp;— programmer Petechkin. The task is to write a very useful function that would ease the life of all the department programmers. For each integer from 0 to <i>M</i> the function would calculate how many times this number appears in the <i>N</i>-element array. Artemy Sidorovich deems that the function should work as follows (the sample code for <i>N</i> = 3, <i>M</i> = 1):</div></div><div><div><table>\n<colgroup><col>\n<col>\n</colgroup><tbody><tr>\n<th>C</th>\n<th>Pascal</th>\n</tr>\n<tr>\n<td>\n<pre>if (arr[0]==0) ++count[0];\nif (arr[0]==1) ++count[1];\nif (arr[1]==0) ++count[0];\nif (arr[1]==1) ++count[1];\nif (arr[2]==0) ++count[0];\nif (arr[2]==1) ++count[1];\n</pre></td>\n<td>\n<pre>if arr[0]=0 then count[0] := count[0] + 1;\nif arr[0]=1 then count[1] := count[1] + 1;\nif arr[1]=0 then count[0] := count[0] + 1;\nif arr[1]=1 then count[1] := count[1] + 1;\nif arr[2]=0 then count[0] := count[0] + 1;\nif arr[2]=1 then count[1] := count[1] + 1;\n</pre></td>\n</tr>\n</tbody></table>\n</div></div>
+`;
+
+function extractText(node: DOMNode): string {
+  if (node.type === "text") {
+    return node.data || "";
+  } else if (node.type === "tag") {
+    const elementNode = node as Element;
+    return (elementNode.children as DOMNode[]).map(extractText).join("");
+  }
+  return "";
+}
+
+const options: HTMLReactParserOptions = {
+  replace(domNode: DOMNode) {
+    if (domNode instanceof Element && domNode.attribs) {
+      const { attribs, children } = domNode;
+      if (domNode.tagName === "code") {
+        const innerText = (domNode.children as DOMNode[])
+          .map(extractText)
+          .join("");
+
+        // console.log("Inner text of code tag:", innerText);
+
+        return (
+          <SyntaxHighlighter language="cpp" showLineNumbers style={docco}>
+            {innerText}
+          </SyntaxHighlighter>
+        );
+      } else if (domNode.tagName === "table") {
+        // Apply Tailwind CSS classes to the table
+
+        return (
+          <div className="relative overflow-x-auto mt-5">
+            <table className="w-full text-sm text-center rtl:text-right text-gray-500">
+              {domToReact(domNode.children as DOMNode[], options)}
+            </table>
+          </div>
+        );
+      } else if (domNode.tagName === "colgroup") {
+        return <></>;
+      } else if (domNode.tagName === "th") {
+        // Apply Tailwind CSS classes to table header
+        return (
+          <th className="text-xs text-gray-700 uppercase bg-gray-50 px-6 py-3">
+            {domToReact(domNode.children as DOMNode[], options)}
+          </th>
+        );
+      } else if (domNode.tagName === "td") {
+        // Apply Tailwind CSS classes to table data
+        return (
+          <td className="px-6 py-4 whitespace-nowrap border">
+            {domToReact(domNode.children as DOMNode[], options)}
+          </td>
+        );
+      }
+    }
+  },
+};
 
 const CodeEditor = () => {
+  const updatedHtml = replaceClassesAndIds(html);
   return (
     <section className="h-screen flex flex-col">
       <div className="mx-auto h-full w-full overflow-y-hidden ">
         <div className="flex flex-wrap h-full w-full p-2">
           <div className="code__description border border-red-500 w-1/2 h-full overflow-y-auto p-4">
             <h1>Hello from Code Description....</h1>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda
-              autem velit sapiente. Aliquid itaque animi distinctio a dolorum
-              officia quos porro! Libero itaque dolorum eius iure alias aperiam
-              ullam numquam quaerat totam, perferendis harum soluta reiciendis
-              consectetur blanditiis. Aut accusantium consequuntur autem, quis
-              quia sint laborum eos laboriosam repudiandae necessitatibus, est
-              tempora reprehenderit molestiae doloremque magni amet beatae ipsum
-              cupiditate suscipit itaque recusandae voluptatem eum blanditiis
-              ducimus. Doloribus expedita placeat ipsum ab aliquam. Asperiores
-              quas illum nobis distinctio a eum error fugit incidunt dolores rem
-              voluptatem, enim tempore soluta libero vero numquam, iusto nam,
-              veniam eligendi velit aperiam quasi! Nostrum doloribus, aperiam
-              nisi doloremque dignissimos iste quisquam nemo ab! Reiciendis
-              optio nam officia consequuntur ducimus repellendus veritatis
-              expedita maiores, itaque inventore debitis quas labore excepturi
-              nesciunt amet officiis id magnam voluptas dolor iure sapiente quae
-              explicabo delectus? Obcaecati explicabo provident, temporibus
-              tempora incidunt corporis culpa distinctio rerum consequuntur quos
-              tenetur quasi dolore minus facere blanditiis laudantium repellat!
-              Laboriosam dolor culpa quis voluptate, nulla, iure animi corporis
-              fugit provident distinctio necessitatibus, saepe est quo?
-              Molestiae et fugit aliquam atque, consectetur explicabo libero eum
-              porro natus. Deleniti dolores non ipsum in earum laborum nobis
-              dolore at id repudiandae fugit reiciendis expedita molestias
-              voluptatibus explicabo veritatis molestiae ducimus, natus sequi
-              sed nam. Omnis eaque aliquid quis! Fugit maxime voluptates autem,
-              possimus neque corrupti voluptate. Perspiciatis consequatur modi
-              illo dolorem officiis laborum blanditiis dolores repellat,
-              suscipit deserunt voluptates optio reiciendis, voluptate,
-              temporibus enim sequi ipsa quam atque earum alias ut facilis?
-              Tempore et accusantium velit, esse voluptatem unde minus, quo rem
-              perferendis nostrum aliquam provident quod hic quisquam? Provident
-              dolorum velit in cupiditate. Cumque labore tempora ratione porro
-              neque sed asperiores iusto explicabo vitae? Voluptatem
-              necessitatibus sint minus cum? Iusto unde sunt ex, nemo maxime
-              quasi temporibus placeat quaerat? Voluptates cum aliquid repellat,
-              sequi libero repellendus quisquam a dolor molestiae ex ea
-              repudiandae, delectus sed nesciunt quos reprehenderit alias
-              perferendis dolore esse, quis vel! Sunt reiciendis tenetur
-              explicabo voluptates? Eligendi eius ducimus cum suscipit
-              dignissimos repellat doloremque qui. Maxime at quam deserunt
-              placeat molestiae sunt consectetur voluptas quasi odio provident.
-              Error corrupti placeat voluptatem facilis, amet nam aut laboriosam
-              consequatur quidem labore voluptatibus molestias voluptatum
-              tenetur aliquam provident nihil accusantium excepturi a,
-              architecto nisi, natus aspernatur odit! Commodi, odio dignissimos,
-              ea delectus nihil at ab numquam quos earum sit cum asperiores
-              repellendus. Exercitationem explicabo voluptatibus veniam
-              obcaecati molestiae, maiores soluta quo alias recusandae numquam?
-            </p>
+            {parse(updatedHtml, options)}
           </div>
           <div className="code__editor border border-blue-500 flex-1 h-full relative ">
             <div className="h-[85vh] border border-red-500">

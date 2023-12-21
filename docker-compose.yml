@@ -1,0 +1,12 @@
+services:
+  mongodb:
+    image: mongo:7.0.4-jammy
+    container_name: mongodb
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
