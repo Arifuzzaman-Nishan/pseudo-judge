@@ -87,4 +87,8 @@ export class ProblemService {
     };
     return this.problemRepository.create(finalProblemData);
   }
+
+  async findAll() {
+    return this.problemRepository.findAll({});
+  }
 }

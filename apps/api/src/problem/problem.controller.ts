@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ProblemService } from './problem.service';
 import { DifficultyRating } from './schemas/problem.schema';
 
@@ -13,8 +13,12 @@ export class ProblemController {
   constructor(private readonly problemService: ProblemService) {}
 
   @Post('crawl')
-  async crawlProblems(@Body() dto: any) {
-    console.log('dto is ', dto);
+  async crawlProblems(@Body() dto: CrawlProblemsDto) {
     return this.problemService.crawlProblems(dto);
+  }
+
+  @Get('findall')
+  async findAll() {
+    return this.problemService.findAll();
   }
 }

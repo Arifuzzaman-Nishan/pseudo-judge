@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 import { ProblemsModule } from './problem/problem.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
+import { AllExceptionsFilter } from './shared/filters/all-exceptions.filter';
 
+const APP_FILTER = 'APP_FILTER';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -13,6 +15,11 @@ import { DatabaseModule } from './database/database.module';
     ProblemsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule {}
