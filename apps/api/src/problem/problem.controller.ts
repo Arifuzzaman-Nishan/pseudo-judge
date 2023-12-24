@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ProblemService } from './problem.service';
 import { DifficultyRating } from './schemas/problem.schema';
 
@@ -20,5 +20,10 @@ export class ProblemController {
   @Get('findall')
   async findAll() {
     return this.problemService.findAll();
+  }
+
+  @Get('findoneWithDetails/:problemId')
+  async findOne(@Param('problemId') problemId: string) {
+    return this.problemService.findOne(problemId);
   }
 }

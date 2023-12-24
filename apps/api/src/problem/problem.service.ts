@@ -8,6 +8,7 @@ import {
   lightOjSelectors,
   timusOjSelectors,
 } from './assets/selector';
+import mongoose from 'mongoose';
 
 export enum OJName {
   TIMUS = 'timus',
@@ -16,7 +17,6 @@ export enum OJName {
   SPOJ = 'spoj',
   LOJ = 'lightoj',
 }
-
 @Injectable()
 export class ProblemService {
   constructor(
@@ -90,5 +90,32 @@ export class ProblemService {
 
   async findAll() {
     return this.problemRepository.findAll({});
+  }
+
+  async findOne(problemId: string) {
+    console.log('problemId is ', problemId);
+
+    const [problemDetails] = await this.problemRepository.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(problemId),
+        },
+      },
+      {
+        $lookup: {
+          from: 'problemdetails',
+          localField: 'problemDetails',
+          foreignField: '_id',
+          as: 'problemDetails',
+        },
+      },
+      {
+        $unwind: {
+          path: '$problemDetails',
+        },
+      },
+    ]);
+
+    return problemDetails;
   }
 }
