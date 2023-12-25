@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "../styles/globals.css";
 
 import Provider from "@/tanstackQuery/utils/TanstackProvider";
+import Layout from "@/components/Shared/Layout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body className={inter.className}>
-        <Provider>{children}</Provider>
+        <Layout>
+          <Provider>{children}</Provider>
+        </Layout>
       </body>
     </html>
   );
