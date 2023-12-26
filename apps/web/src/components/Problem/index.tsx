@@ -5,20 +5,29 @@ import {
   getProblemWithDetails,
 } from "@/lib/tanstackQuery/api/problemsApi";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
-import { Button } from "@/components/ui/button";
+import React, { useEffect } from "react";
 import parse from "html-react-parser";
 import useResizable from "@/hooks/useResizable";
 import ProblemSampleTable from "./ProblemSampleTable";
 import { DividerSvg } from "./Svg";
 import htmlParserOptions from "@/utils/htmlParser";
 import CodeEditor from "../CodeEditor";
+import { codeSlice, useDispatch } from "@/lib/redux";
 
 const Problem = ({ problemId }: { problemId: string }) => {
-  const { data } = useQuery({
+  const { data, isSuccess } = useQuery({
     queryKey: ["problemWithDetails", problemId],
     queryFn: () => getProblemWithDetails(problemId),
   });
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      dispatch(codeSlice.actions.setOjProblemId(data.ojProblemId));
+      dispatch(codeSlice.actions.setOjName(data.ojName));
+    }
+  }, [isSuccess, data, dispatch]);
 
   let pblmDetails = null;
   if (data) {
@@ -90,18 +99,6 @@ const Problem = ({ problemId }: { problemId: string }) => {
               <div className="h-full overflow-hidden">
                 <h2>Editor...</h2>
                 <CodeEditor />
-              </div>
-            </div>
-            <div className="">
-              {/* <TextareaComponent /> */}
-              <div className="">
-                <div className="flex justify-between ">
-                  <Button>Custom Input</Button>
-                  <div className="">
-                    <Button className="mr-8">Run On Custom Input</Button>
-                    <Button>Submit</Button>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

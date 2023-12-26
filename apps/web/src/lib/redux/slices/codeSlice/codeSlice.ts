@@ -1,4 +1,4 @@
-import { CodeLang } from "@/components/CodeEditor/CodeEditorHeader";
+import { CodeLang } from "@/components/CodeEditor/CodeEditorHeader/CodeLangSelect";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export type CodeSliceState = {

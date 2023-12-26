@@ -8,6 +8,7 @@ export type ProblemsType = {
   ojName: string;
   solvedCount: number;
   totalSubmission: number;
+  ojProblemId: string;
 };
 
 export type ProblemDetailsType = {

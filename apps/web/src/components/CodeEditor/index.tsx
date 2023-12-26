@@ -6,6 +6,7 @@ import { loadLanguage } from "@uiw/codemirror-extensions-langs";
 import { EditorView } from "@codemirror/view";
 import { codeSlice, selectCode, useDispatch, useSelector } from "@/lib/redux";
 import CodeEditorHeader from "./CodeEditorHeader";
+import CodeEditorFooter from "./CodeEditorFooter";
 
 const CodeEditor = () => {
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ const CodeEditor = () => {
             syntaxHighlighting: true,
           }}
         />
+        <CodeEditorFooter />
       </section>
     </>
   );

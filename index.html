@@ -1,108 +1,21 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
+<html>
+  <style>
+    section p {
+      color: red;
+    }
+    section + p {
+      color: blue;
+    }
+  </style>
+
   <body>
-    <div id="problem_text">
-      <div class="problem_par">
-        <div class="problem_par_normal">
-          After a success of the previous Vasechkin’s program that allowed to
-          calculate the results of the elections in cause of two days Artemy
-          Sidorovich was placed at the head of the department. At the moment
-          Artemy Sidorovich prepares a task for his subordinate&nbsp;—
-          programmer Petechkin. The task is to write a very useful function that
-          would ease the life of all the department programmers. For each
-          integer from 0 to
-          <i>M</i> the function would calculate how many times this number
-          appears in the <i>N</i>-element array. Artemy Sidorovich deems that
-          the function should work as follows (the sample code for <i>N</i> = 3,
-          <i>M</i> = 1):
-        </div>
-      </div>
-      <div class="problem_par">
-        <div class="problem_par_normal">
-          <table cellpadding="3" cellspacing="0" border="1" width="100%">
-            <colgroup>
-              <col width="50%" />
-              <col width="50%" />
-            </colgroup>
-            <tbody>
-              <tr>
-                <th>C</th>
-                <th>Pascal</th>
-              </tr>
-              <tr>
-                <td>
-                  <pre style="margin: 0px">
-      if (arr[0]==0) ++count[0];
-          if (arr[0]==1) ++count[1];
-          if (arr[1]==0) ++count[0];
-          if (arr[1]==1) ++count[1];
-          if (arr[2]==0) ++count[0];
-          if (arr[2]==1) ++count[1];
-          </pre
-                  >
-                </td>
-                <td>
-                  <pre style="margin: 0px">
-      if arr[0]=0 then count[0] := count[0] + 1;
-          if arr[0]=1 then count[1] := count[1] + 1;
-          if arr[1]=0 then count[0] := count[0] + 1;
-          if arr[1]=1 then count[1] := count[1] + 1;
-          if arr[2]=0 then count[0] := count[0] + 1;
-          if arr[2]=1 then count[1] := count[1] + 1;
-          </pre
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="problem_par">
-        <div class="problem_par_normal">
-          Artemy Sidorovich wants to estimate the time that Petechkin will need
-          to execute the task. We know that Petechkin needs one second to write
-          a line of the code (he’s fast, isn’t he?). Artemy Sidorovich doesn’t
-          know exactly bounds for <i>M</i> and <i>N</i>. Your task is to write
-          program that would calculate a number of seconds that Petechkin will
-          write the code.
-        </div>
-      </div>
-      <h3 class="problem_subtitle">Input</h3>
-      <div class="problem_par">
-        <div class="problem_par_normal">
-          The only line contains integers <i>N</i> (0 ≤ <i>N</i> ≤ 40000) and
-          <i>M</i> (0 ≤ <i>M</i> ≤ 40000).
-        </div>
-      </div>
-      <h3 class="problem_subtitle">Output</h3>
-      <div class="problem_par">
-        <div class="problem_par_normal">
-          Output an amount of seconds that Petechkin needs to write the program.
-        </div>
-      </div>
-      <h3 class="problem_subtitle">Sample</h3>
-      <table class="sample">
-        <tbody>
-          <tr>
-            <th width="350">input</th>
-            <th width="350">output</th>
-          </tr>
-          <tr>
-            <td><pre>3 1</pre></td>
-            <td><pre>6</pre></td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="problem_source">
-        <b>Problem Author: </b>Den Raskovalov<br /><b>Problem Source: </b>Open
-        collegiate programming contest for high school children of the
-        Sverdlovsk region, October 11, 2003<br />
-      </div>
-    </div>
+    <section>
+      <p>paragraph one</p>
+    </section>
+
+    <textarea name="" id="" cols="30" rows="10"></textarea>
+
+    <p>paragraph two</p>
   </body>
 </html>
