@@ -1,4 +1,4 @@
-import { ProblemDetailsType } from "@/tanstackQuery/api/problemsApi";
+import { ProblemDetailsType } from "@/lib/tanstackQuery/api/problemsApi";
 import {
   Table,
   TableBody,

@@ -26,4 +26,9 @@ export class ProblemController {
   async findOne(@Param('problemId') problemId: string) {
     return this.problemService.findOne(problemId);
   }
+
+  @Post('submission')
+  async submitCode(@Body() dto: any) {
+    return this.problemService.submitCode(dto);
+  }
 }

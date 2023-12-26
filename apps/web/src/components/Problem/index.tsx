@@ -3,7 +3,7 @@
 import {
   ProblemDetailsType,
   getProblemWithDetails,
-} from "@/tanstackQuery/api/problemsApi";
+} from "@/lib/tanstackQuery/api/problemsApi";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { Button } from "@/components/ui/button";

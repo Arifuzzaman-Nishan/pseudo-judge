@@ -15,7 +15,7 @@ export enum OJName {
   CODEFORCES = 'codeforces',
   UVA = 'uva',
   SPOJ = 'spoj',
-  LOJ = 'lightoj',
+  LOJ = 'LightOJ',
 }
 @Injectable()
 export class ProblemService {
@@ -117,5 +117,11 @@ export class ProblemService {
     ]);
 
     return problemDetails;
+  }
+
+  async submitCode(dto: any) {
+    console.log('dto is ', dto);
+
+    const { ojName, problemNum, code } = dto;
   }
 }

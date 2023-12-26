@@ -1,6 +1,6 @@
 "use client";
 
-import { ProblemsType, getProblems } from "@/tanstackQuery/api/problemsApi";
+import { ProblemsType, getProblems } from "@/lib/tanstackQuery/api/problemsApi";
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 

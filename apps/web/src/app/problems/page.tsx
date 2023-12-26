@@ -1,6 +1,6 @@
 import Problems from "@/components/Problems";
-import { getProblems } from "@/tanstackQuery/api/problemsApi";
-import getQueryClient from "@/tanstackQuery/utils/getQueryClient";
+import { getProblems } from "@/lib/tanstackQuery/api/problemsApi";
+import getQueryClient from "@/lib/tanstackQuery/utils/getQueryClient";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import React from "react";
 

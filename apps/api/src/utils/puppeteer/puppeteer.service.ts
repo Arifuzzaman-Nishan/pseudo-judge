@@ -139,6 +139,41 @@ export class PuppeteerService {
     }, selector);
   }
 
+  timer(ms: number) {
+    return new Promise((reslove) => setTimeout(reslove, ms));
+  }
+
+  async typing(typingText: string, selector: string, logText: string) {
+    console.log(logText);
+    await this.page.waitForSelector(selector, {
+      visible: true,
+      timeout: 9000,
+    });
+    await this.page.focus(selector);
+    await this.page.keyboard.type(typingText, {
+      delay: 90,
+    });
+    await this.timer(3000);
+    await this.page.keyboard.press('Enter');
+    await this.timer(5000);
+  }
+
+  async getCookies() {
+    const cookies = await this.page.cookies();
+    let cookieString = '';
+
+    cookies.forEach((cookie) => {
+      if (
+        cookie.name === 'lightoj-session' ||
+        cookie.name === 'lightoj-session-values'
+      ) {
+        cookieString += `${cookie.name}=${cookie.value}; `;
+      }
+    });
+
+    return cookieString;
+  }
+
   async close() {
     await this.page.close();
     await this.browser.close();

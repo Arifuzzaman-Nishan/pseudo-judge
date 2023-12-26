@@ -1,28 +1,37 @@
-import React, { useCallback, useState } from "react";
+"use client";
+
+import React, { useCallback } from "react";
 import CodeMirror, { type ViewUpdate } from "@uiw/react-codemirror";
 import { loadLanguage } from "@uiw/codemirror-extensions-langs";
 import { EditorView } from "@codemirror/view";
+import { codeSlice, selectCode, useDispatch, useSelector } from "@/lib/redux";
+import CodeEditorHeader from "./CodeEditorHeader";
 
 const CodeEditor = () => {
-  const [value, setValue] = useState<string>("console.log('hello world!');");
+  const dispatch = useDispatch();
+  const state = useSelector(selectCode);
 
-  const onChange = useCallback((val: string, viewUpdate: ViewUpdate) => {
-    console.log("val: ", val);
-    setValue(val);
-  }, []);
+  const onChange = useCallback(
+    (val: string, viewUpdate: ViewUpdate) => {
+      dispatch(codeSlice.actions.setCodeStr(val));
+    },
+    [dispatch]
+  );
 
   return (
     <>
-      <section>
+      <section className="p-3">
+        <CodeEditorHeader />
         <CodeMirror
-          value={value}
+          value={state.codeStr}
           // minHeight="60vh"
           maxHeight="60vh"
           onChange={onChange}
           spellCheck={false}
-          extensions={[loadLanguage("cpp")!, EditorView.lineWrapping].filter(
-            Boolean
-          )}
+          extensions={[
+            loadLanguage(state.lang)!,
+            EditorView.lineWrapping,
+          ].filter(Boolean)}
           basicSetup={{
             autocompletion: true,
             bracketMatching: true,

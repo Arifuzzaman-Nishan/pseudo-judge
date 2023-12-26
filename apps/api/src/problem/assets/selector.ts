@@ -17,7 +17,13 @@ export type ProblemKey =
 
 export const lightOjSelectors: Array<SelectorType> = [
   { key: 'title', selector: 'div.title' },
-  { key: 'ojProblemId', selector: 'span.tag' },
+  {
+    key: 'ojProblemId',
+    selector: () => {
+      const element = document.querySelector<HTMLElement>('span.tag');
+      return element?.innerText.replace('LOJ-', '').trim() || '';
+    },
+  },
   {
     key: 'timeLimit',
     selector: 'div:nth-child(1) > div.tooltip-trigger > span',
