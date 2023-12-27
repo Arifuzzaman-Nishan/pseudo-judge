@@ -11,16 +11,21 @@ const headerData = [
   },
   {
     key: 3,
+    name: "Groups",
+    path: "/groups",
+  },
+  {
+    key: 4,
     name: "Problems",
     path: "/problems",
   },
   {
-    key: 4,
+    key: 5,
     name: "Ranks",
     path: "/ranks",
   },
   {
-    key: 5,
+    key: 6,
     name: "Settings",
     path: "/settings",
   },
