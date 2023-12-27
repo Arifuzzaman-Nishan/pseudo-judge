@@ -9,6 +9,7 @@ import {
   timusOjSelectors,
 } from './assets/selector';
 import mongoose from 'mongoose';
+import { VjudgeService } from '@/utils/vjudge/vjudge.service';
 
 export enum OJName {
   TIMUS = 'timus',
@@ -17,12 +18,21 @@ export enum OJName {
   SPOJ = 'spoj',
   LOJ = 'LightOJ',
 }
+
+export type SubmitCodeDto = {
+  codeStr: string;
+  lang: string;
+  ojName: string;
+  ojProblemId: string;
+};
+
 @Injectable()
 export class ProblemService {
   constructor(
     private readonly puppeteerService: PuppeteerService,
     private readonly problemRepository: ProblemRepository,
     private readonly problemDetailsRepository: ProblemDetailsRepository,
+    private readonly vjudgeService: VjudgeService,
   ) {}
 
   async crawlProblems(dto: CrawlProblemsDto) {
@@ -119,9 +129,19 @@ export class ProblemService {
     return problemDetails;
   }
 
-  async submitCode(dto: any) {
+  async submitCode(dto: SubmitCodeDto) {
     console.log('dto is ', dto);
 
-    const { ojName, problemNum, code } = dto;
+    await this.vjudgeService.login();
+    const codeSubmitRes = await this.vjudgeService.submitCode(dto);
+
+    console.log('codeSubmitRes is ', codeSubmitRes);
+    const result = await this.vjudgeService.solution({
+      runId: codeSubmitRes.runId,
+    });
+    console.log('result is ', result);
+    return result;
+
+    // const { ojName, problemNum, code } = dto;
   }
 }

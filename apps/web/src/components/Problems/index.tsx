@@ -15,6 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
+import Container from "@/components/Shared/Container";
 
 export function ProblemsTable({ datas }: { datas: ProblemsType[] }) {
   const router = useRouter();
@@ -64,12 +65,11 @@ const Problems = () => {
   }
 
   return (
-    <section className="container">
+    <Container>
       <div>
-        <h1>Hello from problems...</h1>
         <ProblemsTable datas={data as ProblemsType[]} />
       </div>
-    </section>
+    </Container>
   );
 };
 

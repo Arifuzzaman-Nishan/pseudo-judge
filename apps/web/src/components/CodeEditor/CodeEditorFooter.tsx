@@ -1,9 +1,22 @@
+"use client";
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { selectCode, useSelector } from "@/lib/redux";
+import { useMutation } from "@tanstack/react-query";
+import { submitCode } from "@/lib/tanstackQuery/api/problemsApi";
 
 const CodeEditorFooter = () => {
   const codeState = useSelector(selectCode);
+
+  const submitCodeMutation = useMutation({
+    mutationKey: ["submitCode"],
+    mutationFn: submitCode,
+  });
+
+  if (submitCodeMutation.isSuccess) {
+    console.log("the data is ", submitCodeMutation.data);
+  }
 
   const convertToBase64 = (str: string) => {
     const bytes = new TextEncoder().encode(str);
@@ -13,12 +26,13 @@ const CodeEditorFooter = () => {
 
   const handleCodeSubmit = () => {
     // console.log("codeState is ", codeState);
-    const newCodeState = {
-      ...codeState,
-      codeStr: convertToBase64(codeState.codeStr),
-    };
+    // const newCodeState = {
+    //   ...codeState,
+    //   codeStr: convertToBase64(codeState.codeStr),
+    // };
 
-    console.log("codeState is ", newCodeState);
+    console.log("codeState is ", codeState);
+    submitCodeMutation.mutate(codeState);
   };
 
   return (

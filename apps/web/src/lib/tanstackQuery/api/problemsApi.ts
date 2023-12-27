@@ -23,6 +23,13 @@ export type ProblemDetailsType = {
   notes: string;
 };
 
+export type SubmitCodeType = {
+  codeStr: string;
+  lang: string;
+  ojName: string;
+  ojProblemId: string;
+};
+
 export type ProblemWithDetailsType = {
   problemDetails: ProblemDetailsType;
 } & ProblemsType;
@@ -44,6 +51,14 @@ const problemsApi = {
     });
     return response.data;
   },
+  submitCode: async (data: SubmitCodeType): Promise<any> => {
+    const response = await baseApi({
+      url: "/problem/submission",
+      method: "POST",
+      data: data,
+    });
+    return response.data;
+  },
 };
 
-export const { getProblems, getProblemWithDetails } = problemsApi;
+export const { getProblems, getProblemWithDetails, submitCode } = problemsApi;

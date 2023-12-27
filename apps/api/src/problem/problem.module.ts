@@ -10,6 +10,7 @@ import {
 } from './schemas/problemDetails.schema';
 import { ProblemRepository } from './repositories/problem.repository';
 import { ProblemDetailsRepository } from './repositories/problemDetails.repository';
+import { VjudgeService } from '@/utils/vjudge/vjudge.service';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ProblemDetailsRepository } from './repositories/problemDetails.reposito
   providers: [
     ProblemService,
     PuppeteerService,
+    VjudgeService,
     ProblemRepository,
     ProblemDetailsRepository,
   ],

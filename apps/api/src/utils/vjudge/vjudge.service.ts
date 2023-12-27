@@ -10,47 +10,63 @@ const axiosClient = wrapper(axios.create({ jar }));
 @Injectable()
 export class VjudgeService {
   async login() {
+    console.log('from login...');
     const loginFormData = new FormData();
     loginFormData.append('username', 'arifuzzamannishan@gmail.com');
     loginFormData.append('password', 'Anishan38@@');
 
-    const res = await axiosClient({
-      method: 'post',
-      url: 'https://vjudge.net/user/login',
-      data: loginFormData,
-    });
-    console.log(res.data);
+    try {
+      const res = await axiosClient({
+        method: 'post',
+        url: 'https://vjudge.net/user/login',
+        data: loginFormData,
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+      });
+      console.log('login result is ', res.data);
+    } catch (err: any) {
+      console.log('login error ', err.message);
+    }
   }
 
   async submitCode({
     ojName,
-    problemNum,
-    code,
+    ojProblemId,
+    codeStr,
   }: {
     ojName: string;
-    problemNum: string;
-    code: string;
+    ojProblemId: string;
+    codeStr: string;
   }) {
+    console.log('ojName is ', ojName);
+    console.log('ojProblemId', ojProblemId);
+
     const submitFormData = new FormData();
     submitFormData.append('method', '0');
     submitFormData.append('language', 'cpp14');
     submitFormData.append('open', '1');
     submitFormData.append('oj', ojName);
-    submitFormData.append('probNum', problemNum);
+    submitFormData.append('probNum', ojProblemId);
     submitFormData.append('captcha', '');
-    submitFormData.append('source', code);
+    submitFormData.append('source', codeStr);
 
-    const res = await axiosClient({
-      url: 'https://vjudge.net/problem/submit',
-      method: 'post',
-      data: submitFormData,
-      withCredentials: true,
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-      },
-    });
-    return res.data;
+    try {
+      const res = await axiosClient({
+        url: 'https://vjudge.net/problem/submit',
+        method: 'post',
+        data: submitFormData,
+        withCredentials: true,
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+      });
+      return res.data;
+    } catch (err: any) {
+      console.log('submitCode error', err);
+    }
   }
 
   async solution({ runId }: { runId: string }) {
@@ -61,6 +77,10 @@ export class VjudgeService {
         url: `https://vjudge.net/solution/data/${runId}`,
         method: 'get',
         withCredentials: true,
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
       });
       processing = res.data.processing;
     }
