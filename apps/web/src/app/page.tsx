@@ -1,10 +1,9 @@
-import CodeEditor from "@/components/CodeEditor";
-import Image from "next/image";
+import Home from "@/components/Home";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <>
-      <CodeEditor />
+      <Home />
     </>
   );
 }
