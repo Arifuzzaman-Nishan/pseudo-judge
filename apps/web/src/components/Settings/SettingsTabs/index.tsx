@@ -4,8 +4,8 @@ import ProblemsTab from "../ProblemsTab";
 
 const SettingsTabs = () => {
   return (
-    <Tabs defaultValue="groups" className="w-[400px]">
-      <TabsList className="grid w-full grid-cols-2">
+    <Tabs defaultValue="groups">
+      <TabsList className="grid grid-cols-2 w-[400px] mx-auto">
         <TabsTrigger value="groups">Groups</TabsTrigger>
         <TabsTrigger value="problems">Problems</TabsTrigger>
       </TabsList>

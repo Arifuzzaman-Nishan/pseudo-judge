@@ -9,7 +9,7 @@ import ProblemsTabForm from "./ProblemsTabForm";
 
 const ProblemsTab = () => {
   return (
-    <section>
+    <section className="w-[400px] mx-auto">
       <Card>
         <CardHeader>
           <CardTitle>Add Problem</CardTitle>

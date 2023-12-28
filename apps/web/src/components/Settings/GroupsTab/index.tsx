@@ -6,11 +6,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import GroupsTabForm from "./GroupsTabForm";
+import GroupsTabTable from "./GroupsTabTable";
 
 const GroupsTab = () => {
   return (
     <section>
-      <Card>
+      <Card className="w-[400px] mx-auto">
         <CardHeader>
           <CardTitle>Add Group</CardTitle>
           <CardDescription>
@@ -21,6 +22,9 @@ const GroupsTab = () => {
           <GroupsTabForm />
         </CardContent>
       </Card>
+      <div>
+        <GroupsTabTable />
+      </div>
     </section>
   );
 };

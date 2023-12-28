@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "@/styles/globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 import Provider from "@/lib/tanstackQuery/utils/TanstackProvider";
 import Layout from "@/components/Shared/Layout";
@@ -25,6 +26,7 @@ export default function RootLayout({
         <ReduxProvider>
           <Layout>
             <Provider>{children}</Provider>
+            <Toaster />
           </Layout>
         </ReduxProvider>
       </body>

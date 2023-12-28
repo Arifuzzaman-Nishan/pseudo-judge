@@ -3,6 +3,7 @@ import { ProblemsModule } from './problem/problem.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { AllExceptionsFilter } from './shared/filters/all-exceptions.filter';
+import { GroupModule } from './group/group.module';
 
 const APP_FILTER = 'APP_FILTER';
 @Module({
@@ -13,6 +14,7 @@ const APP_FILTER = 'APP_FILTER';
     }),
     DatabaseModule,
     ProblemsModule,
+    GroupModule,
   ],
   controllers: [],
   providers: [
