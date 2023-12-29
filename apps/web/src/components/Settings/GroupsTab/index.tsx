@@ -7,21 +7,30 @@ import {
 } from "@/components/ui/card";
 import GroupsTabForm from "./GroupsTabForm";
 import GroupsTabTable from "./GroupsTabTable";
+import { ReactNode } from "react";
+
+const GroupsFromCard = ({ children }: { children: ReactNode }) => {
+  return (
+    <Card className="w-[400px] mx-auto">
+      <CardHeader>
+        <CardTitle>Add Group</CardTitle>
+        <CardDescription>
+          Enter the group name. Click save when you&apos;re done.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-2">{children}</CardContent>
+    </Card>
+  );
+};
 
 const GroupsTab = () => {
   return (
     <section>
-      <Card className="w-[400px] mx-auto">
-        <CardHeader>
-          <CardTitle>Add Group</CardTitle>
-          <CardDescription>
-            Enter the group name. Click save when you&apos;re done.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2">
+      <div>
+        <GroupsFromCard>
           <GroupsTabForm />
-        </CardContent>
-      </Card>
+        </GroupsFromCard>
+      </div>
       <div>
         <GroupsTabTable />
       </div>

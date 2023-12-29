@@ -20,8 +20,23 @@ export class GroupController {
     return this.groupService.findGroupById(id);
   }
 
-  @Post('add-problems')
+  @Get('findGroupAddedProblems/:groupId')
+  findGroupProblems(@Param('groupId') groupId: string) {
+    return this.groupService.findGroupAddedProblems(groupId);
+  }
+
+  @Get('findGroupNotAddedProblems/:groupId')
+  findGroupNotAddedProblems(@Param('groupId') groupId: string) {
+    return this.groupService.findGroupNotAddedProblems(groupId);
+  }
+
+  @Post('addProblemsToGroup')
   addProblems(@Body() dto: any) {
     return this.groupService.problemsAddedIntoGroup(dto);
+  }
+
+  @Post('removeProblemFromGroup')
+  removeProblem(@Body() dto: any) {
+    return this.groupService.removeProblemFromGroup(dto);
   }
 }

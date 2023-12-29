@@ -15,7 +15,7 @@ import {
   GetGroupsType,
   getGroupsQuery,
 } from "@/lib/tanstackQuery/api/groupsApi";
-import GroupTabTableDropdown from "./GroupTabTableDropdown";
+import TableDropdown from "./TableDropdown";
 
 const tableHeader = [
   {
@@ -73,10 +73,7 @@ const GroupsTabTable = () => {
         <TableCell>{group.enrollmentKey}</TableCell>
         <TableCell>{group.totalMembers}</TableCell>
         <TableCell>
-          <GroupTabTableDropdown
-            groupId={group._id}
-            groupName={group.groupName}
-          />
+          <TableDropdown groupId={group._id} groupName={group.groupName} />
         </TableCell>
       </TableRow>
     ));
@@ -94,12 +91,6 @@ const GroupsTabTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>{content}</TableBody>
-        {/* <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}>Total</TableCell>
-            <TableCell className="text-right">$2,500.00</TableCell>
-          </TableRow>
-        </TableFooter> */}
       </Table>
     </section>
   );

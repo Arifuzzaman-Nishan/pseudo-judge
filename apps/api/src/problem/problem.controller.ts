@@ -27,6 +27,11 @@ export class ProblemController {
     return this.problemService.findOne(problemId);
   }
 
+  @Get('findGroupProblems/:groupId')
+  async findGroupProblems(@Param('groupId') groupId: string) {
+    return this.problemService.findGroupProblems(groupId);
+  }
+
   @Post('submission')
   async submitCode(@Body() dto: any) {
     return this.problemService.submitCode(dto);

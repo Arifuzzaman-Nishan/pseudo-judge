@@ -144,4 +144,11 @@ export class ProblemService {
 
     // const { ojName, problemNum, code } = dto;
   }
+
+  async findGroupProblems(groupId: string) {
+    const problems = await this.problemRepository.findAll({
+      groupId,
+    });
+    return problems;
+  }
 }

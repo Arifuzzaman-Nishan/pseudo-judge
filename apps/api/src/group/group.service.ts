@@ -46,6 +46,7 @@ export class GroupService {
 
   async problemsAddedIntoGroup(dto: any) {
     const { problemIds, groupId } = dto;
+    console.log('dtos is ', dto);
 
     const group = await this.groupRepository.findOne({
       _id: groupId,
@@ -66,6 +67,100 @@ export class GroupService {
           },
         },
       },
+      {
+        new: true,
+      },
     );
+  }
+
+  async removeProblemFromGroup(dto: any) {
+    const { problemId, groupId } = dto;
+    const group = await this.groupRepository.findOne({
+      _id: groupId,
+    });
+
+    if (!group) {
+      throw new HttpException('Group not found', HttpStatus.NOT_FOUND);
+    }
+
+    return this.groupRepository.findOneAndUpdate(
+      {
+        _id: groupId,
+      },
+      {
+        $pull: {
+          problems: problemId,
+        },
+      },
+      {
+        new: true,
+      },
+    );
+  }
+
+  async findGroupAddedProblems(groupId: string) {
+    const problems = await this.groupRepository.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(groupId),
+        },
+      },
+      {
+        $lookup: {
+          from: 'problems',
+          localField: 'problems',
+          foreignField: '_id',
+          as: 'problems',
+        },
+      },
+      {
+        $unwind: {
+          path: '$problems',
+        },
+      },
+      {
+        $replaceRoot: { newRoot: '$problems' },
+      },
+    ]);
+
+    return problems;
+  }
+
+  async findGroupNotAddedProblems(groupId: string) {
+    const problems = await this.groupRepository.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(groupId),
+        },
+      },
+      {
+        $lookup: {
+          from: 'problems',
+          let: { problemIds: '$problems' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $not: {
+                    $in: ['$_id', '$$problemIds'],
+                  },
+                },
+              },
+            },
+          ],
+          as: 'problems',
+        },
+      },
+      {
+        $unwind: {
+          path: '$problems',
+        },
+      },
+      {
+        $replaceRoot: { newRoot: '$problems' },
+      },
+    ]);
+
+    return problems;
   }
 }
