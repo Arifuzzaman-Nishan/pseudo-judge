@@ -1,6 +1,9 @@
 "use client";
 
-import { ProblemsType, getProblems } from "@/lib/tanstackQuery/api/problemsApi";
+import {
+  ProblemsType,
+  getProblemsQuery,
+} from "@/lib/tanstackQuery/api/problemsApi";
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 
@@ -53,7 +56,7 @@ export function ProblemsTable({ datas }: { datas: ProblemsType[] }) {
 const Problems = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["problems"],
-    queryFn: getProblems,
+    queryFn: getProblemsQuery,
   });
 
   if (isLoading) return <div>Loading...</div>;

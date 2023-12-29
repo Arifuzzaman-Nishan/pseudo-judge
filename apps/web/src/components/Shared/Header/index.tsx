@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import pseudoJudgeLogo from "../../../../public/assets/images/logo1.png";
 import { usePathname } from "next/navigation";
 import headerData from "../../../../public/assets/data/headerdata";
+import { Button } from "@/components/ui/button";
 
 const Header = () => {
   const pathname = usePathname();
@@ -104,7 +105,12 @@ const Header = () => {
                       </Link>
                     );
                   })}
-              {/* {showUserInfo()} */}
+
+              <div>
+                <Link href="/login">
+                  <Button>Login</Button>
+                </Link>
+              </div>
             </div>
           </div>
         </nav>

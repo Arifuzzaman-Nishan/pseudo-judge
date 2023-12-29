@@ -14,11 +14,21 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-type FormFieldType = "password" | "confirmPassword" | "username" | "email";
+type FormFieldType =
+  | "password"
+  | "confirmPassword"
+  | "username"
+  | "email"
+  | "fullName";
 
 const formSchema = z
   .object({
-    username: z.string(),
+    fullName: z.string().min(5, {
+      message: "Full name must be at least 5 characters long",
+    }),
+    username: z.string().min(4, {
+      message: "Username must be at least 4 characters long",
+    }),
     email: z.string().email({
       message: "Please enter a valid email",
     }),
@@ -42,27 +52,34 @@ const formSchema = z
 const formFields = [
   {
     key: 1,
+    label: "Full Name",
+    name: "fullName",
+    placeholder: "boss psuedojudge",
+    type: "text",
+  },
+  {
+    key: 2,
     label: "Username",
     name: "username",
     placeholder: "psuedojudge",
     type: "text",
   },
   {
-    key: 2,
+    key: 3,
     label: "Email",
     name: "email",
     placeholder: "boss@gmail.com",
     type: "email",
   },
   {
-    key: 3,
+    key: 4,
     label: "Password",
     name: "password",
     placeholder: "********",
     type: "password",
   },
   {
-    key: 4,
+    key: 5,
     label: "Confirm Password",
     name: "confirmPassword",
     placeholder: "********",
@@ -74,6 +91,7 @@ const RegisterForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      fullName: "",
       username: "",
       email: "",
       password: "",
