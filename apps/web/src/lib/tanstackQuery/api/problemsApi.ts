@@ -1,3 +1,4 @@
+import { DifficultyRating, OJName } from "@/types";
 import baseApi from "./baseApi";
 
 export type ProblemsType = {
@@ -34,8 +35,14 @@ export type ProblemWithDetailsType = {
   problemDetails: ProblemDetailsType;
 } & ProblemsType;
 
+type AddProblemMutationType = {
+  url: string;
+  ojName: OJName;
+  difficultyRating: DifficultyRating;
+};
+
 const problemsApi = {
-  getProblems: async (): Promise<Array<ProblemsType>> => {
+  getProblemsQuery: async (): Promise<Array<ProblemsType>> => {
     const response = await baseApi({
       url: "/problem/findall",
       method: "GET",
@@ -59,6 +66,20 @@ const problemsApi = {
     });
     return response.data;
   },
+  addProblemMutation: async (data: AddProblemMutationType) => {
+    const response = await baseApi({
+      url: "/problem/create",
+      method: "POST",
+      data: data,
+    });
+
+    return response.data;
+  },
 };
 
-export const { getProblems, getProblemWithDetails, submitCode } = problemsApi;
+export const {
+  getProblemsQuery,
+  getProblemWithDetails,
+  submitCode,
+  addProblemMutation,
+} = problemsApi;

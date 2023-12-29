@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "@/styles/globals.css";
-import { Toaster } from "@/components/ui/toaster";
+// import { Toaster } from "@/components/ui/toaster";
 
 import Provider from "@/lib/tanstackQuery/utils/TanstackProvider";
 import Layout from "@/components/Shared/Layout";
 import ReduxProvider from "@/lib/redux/provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const outfit = Outfit({ subsets: ["latin"] });
 

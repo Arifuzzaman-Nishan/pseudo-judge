@@ -24,6 +24,10 @@ import { DifficultyRating, OJName } from "@/types";
 import * as z from "zod";
 import { FormFieldType, ProblemFormSchema } from "./schema";
 import { formFields } from "./data";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addProblemMutation } from "@/lib/tanstackQuery/api/problemsApi";
+
+import { toast } from "sonner";
 
 const ProblemsTabForm = () => {
   const form = useForm<z.infer<typeof ProblemFormSchema>>({
@@ -35,13 +39,22 @@ const ProblemsTabForm = () => {
     },
   });
 
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: addProblemMutation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["problems"] });
+    },
+  });
+
   function onSubmit(data: z.infer<typeof ProblemFormSchema>) {
     console.log("problem form data", data);
+    toast.promise(mutation.mutateAsync(data), {
+      loading: "Loading...",
+      success: "Problem added successfully",
+      error: "Error adding problem",
+    });
   }
-
-  const handleChange = () => {
-    console.log("changed");
-  };
 
   return (
     <>

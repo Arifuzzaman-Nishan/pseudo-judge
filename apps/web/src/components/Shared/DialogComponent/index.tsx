@@ -14,7 +14,7 @@ type DialogComponentProps = {
   title: string;
   description?: string;
   content: React.ReactNode;
-  footer: React.ReactNode;
+  footer?: React.ReactNode;
 };
 
 const DialogComponent: FC<DialogComponentProps> = ({

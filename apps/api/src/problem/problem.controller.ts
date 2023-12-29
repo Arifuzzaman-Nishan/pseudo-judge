@@ -12,7 +12,7 @@ export type CrawlProblemsDto = {
 export class ProblemController {
   constructor(private readonly problemService: ProblemService) {}
 
-  @Post('crawl')
+  @Post('create')
   async crawlProblems(@Body() dto: CrawlProblemsDto) {
     return this.problemService.crawlProblems(dto);
   }

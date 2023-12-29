@@ -1,98 +1,77 @@
 "use client";
 
 import React from "react";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
 import {
   GetGroupsType,
   getGroupsQuery,
 } from "@/lib/tanstackQuery/api/groupsApi";
 import TableDropdown from "./TableDropdown";
+import { ColumnDef } from "@tanstack/react-table";
+import TableComponent from "@/components/Shared/TableComponent";
+import { Button } from "@/components/ui/button";
 
-const tableHeader = [
+const columns: ColumnDef<GetGroupsType>[] = [
   {
-    key: 1,
-    name: "SI No.",
+    accessorKey: "index",
+    header: "SI No.",
+    cell: ({ row }) => <div>{row.index + 1}</div>,
   },
   {
-    key: 2,
-    name: "Group Name",
+    accessorKey: "groupName",
+    header: "Group Name",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("groupName")}</div>
+    ),
   },
   {
-    key: 3,
-    name: "Enrollment Key",
+    accessorKey: "enrollmentKey",
+    header: "Enrollment Key",
+    cell: ({ row }) => <div>{row.getValue("enrollmentKey")}</div>,
   },
   {
-    key: 4,
-    name: "Total Members",
+    accessorKey: "totalMembers",
+    header: "Total Members",
   },
   {
-    key: 5,
-    name: "Action",
+    accessorKey: "action",
+    header: "Action",
+    cell: ({ row }) => (
+      <div>
+        <TableDropdown
+          groupId={row.original._id}
+          groupName={row.original.groupName}
+        />
+      </div>
+    ),
   },
 ];
 
-const GroupsTabTable = () => {
-  const { isLoading, isError, data } = useQuery({
+const GroupsTabTable = ({
+  setIsOpen,
+}: {
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+  const { isLoading, isError, data, isSuccess } = useQuery({
     queryKey: ["groups"],
     queryFn: getGroupsQuery,
   });
 
   let content = null;
   if (isLoading) {
-    content = (
-      <TableRow>
-        <TableCell colSpan={4}>Loading...</TableCell>
-      </TableRow>
-    );
   } else if (!isLoading && isError) {
-    content = (
-      <TableRow>
-        <TableCell colSpan={4}>Error...</TableCell>
-      </TableRow>
-    );
   } else if (!isLoading && !isError && data?.length === 0) {
-    content = (
-      <TableRow>
-        <TableCell colSpan={4}>No data found...</TableCell>
-      </TableRow>
-    );
   } else if (!isLoading && !isError && data && data?.length > 0) {
-    content = data.map((group: GetGroupsType, index: number) => (
-      <TableRow key={group._id}>
-        <TableCell className="font-medium">{index + 1}</TableCell>
-        <TableCell>{group.groupName}</TableCell>
-        <TableCell>{group.enrollmentKey}</TableCell>
-        <TableCell>{group.totalMembers}</TableCell>
-        <TableCell>
-          <TableDropdown groupId={group._id} groupName={group.groupName} />
-        </TableCell>
-      </TableRow>
-    ));
   }
 
   return (
-    <section className="mt-5">
-      <h1>Hello from groups tabs table...</h1>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            {tableHeader.map((header) => (
-              <TableHead key={header.key}>{header.name}</TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>{content}</TableBody>
-      </Table>
-    </section>
+    <div>
+      <TableComponent columns={columns} data={isSuccess ? data : []}>
+        <div className="ml-auto">
+          <Button onClick={() => setIsOpen(true)}>Add Group</Button>
+        </div>
+      </TableComponent>
+    </div>
   );
 };
 
