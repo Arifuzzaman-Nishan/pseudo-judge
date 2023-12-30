@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import axios from "axios";
 
 type FormFieldType =
   | "password"
@@ -99,8 +100,14 @@ const RegisterForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
+    const res = await axios({
+      method: "POST",
+      url: "/api/register",
+      data: values,
+    });
+    console.log("axios res is ", res.data);
   };
 
   return (
