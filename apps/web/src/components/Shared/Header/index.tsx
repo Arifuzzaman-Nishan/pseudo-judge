@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import pseudoJudgeLogo from "../../../../public/assets/images/logo1.png";
 import { usePathname, useRouter } from "next/navigation";
 import headerData from "../../../../public/assets/data/headerdata";
@@ -94,18 +94,13 @@ const Header = () => {
   const auth = useSelector(selectAuth);
 
   const pathname = usePathname();
-  // const [isClient, setIsClient] = useState(false);
-  // useEffect(() => {
-  //   setIsClient(true);
-  // }, []);
 
   const { data, isSuccess } = useQuery({
-    queryKey: ["isLogin"],
+    queryKey: ["isLogin", pathname],
     queryFn: isLoginQuery,
     retry: false,
+    refetchOnMount: true,
   });
-
-  console.log("login user data is ", data);
 
   let content = (
     <Link href="/login">
@@ -127,7 +122,7 @@ const Header = () => {
         })
       );
     }
-  }, [data, dispatch, isSuccess, pathname]);
+  }, [data, dispatch, isSuccess]);
 
   return (
     <>

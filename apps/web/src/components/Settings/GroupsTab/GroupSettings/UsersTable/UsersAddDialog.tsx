@@ -3,28 +3,22 @@ import TableComponent from "@/components/Shared/TableComponent";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  addProblemsToGroupMutation,
-  getGroupNotAddedProblemsQuery,
+  UsersTableType,
+  addUsersToGroupMutation,
+  getGroupNotAddedUsersQuery,
 } from "@/lib/tanstackQuery/api/groupsApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
+import Image from "next/image";
 import React, { FC, useCallback, useState } from "react";
 
-type ProblemAddDialogProps = {
+type UsersAddDialogProps = {
   isDialogOpen: boolean;
   setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   groupId: string;
 };
 
-type ProblemsTable = {
-  index?: number;
-  _id: string;
-  title: string;
-  ojName: string;
-  difficultyRating: string;
-};
-
-export const columns: ColumnDef<ProblemsTable>[] = [
+export const columns: ColumnDef<UsersTableType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -53,26 +47,44 @@ export const columns: ColumnDef<ProblemsTable>[] = [
     cell: ({ row }) => <div>{row.index + 1}</div>,
   },
   {
-    accessorKey: "title",
-    header: "Problem Title",
+    accessorKey: "imageUrl",
+    header: "Image",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("title")}</div>
+      <div>
+        <Image
+          src={row.getValue("imageUrl")}
+          alt="user image"
+          width={50}
+          height={50}
+        />
+      </div>
     ),
   },
   {
-    accessorKey: "ojName",
-    header: "OJ Name",
+    accessorKey: "fullName",
+    header: "Full Name",
     cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("ojName")}</div>
+      <div className="capitalize">{row.getValue("fullName")}</div>
     ),
   },
   {
-    accessorKey: "difficultyRating",
-    header: "Difficulty Rating",
+    accessorKey: "username",
+    header: "Username",
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("username")}</div>
+    ),
+  },
+  {
+    accessorKey: "email",
+    header: "Email",
+  },
+  {
+    accessorKey: "role",
+    header: "Role",
   },
 ];
 
-const ProblemsAddDialog: FC<ProblemAddDialogProps> = ({
+const UsersAddDialog: FC<UsersAddDialogProps> = ({
   isDialogOpen,
   setIsDialogOpen,
   groupId,
@@ -80,25 +92,25 @@ const ProblemsAddDialog: FC<ProblemAddDialogProps> = ({
   const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
 
   const {
-    data: problemsData,
+    data: usersData,
     isLoading,
     isSuccess,
   } = useQuery({
-    queryKey: ["group", "notAddedProblems", groupId],
-    queryFn: () => getGroupNotAddedProblemsQuery(groupId),
+    queryKey: ["group", "notAddedUsers", groupId],
+    queryFn: () => getGroupNotAddedUsersQuery(groupId),
     enabled: !!groupId,
   });
 
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: addProblemsToGroupMutation,
+    mutationFn: addUsersToGroupMutation,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["group", "addedProblems", groupId],
+        queryKey: ["group", "addedUsers", groupId],
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["group", "notAddedProblems", groupId],
+        queryKey: ["group", "notAddedUsers", groupId],
       });
     },
   });
@@ -107,11 +119,11 @@ const ProblemsAddDialog: FC<ProblemAddDialogProps> = ({
     setSelectedRowIds(rowIds);
   }, []);
 
-  const handleProblemsAdd = () => {
+  const handleUsersAdd = () => {
     if (selectedRowIds.length > 0) {
       mutation.mutate({
         groupId,
-        problemIds: selectedRowIds,
+        userIds: selectedRowIds,
       });
     }
   };
@@ -121,13 +133,13 @@ const ProblemsAddDialog: FC<ProblemAddDialogProps> = ({
       <DialogComponent
         isOpen={isDialogOpen}
         setIsOpen={setIsDialogOpen}
-        title="Add Problems"
-        description="Select the problems you want to add to the group."
+        title="Add Users"
+        description="Select the Users you want to add to the group."
         content={
           <div>
             <TableComponent
               columns={columns}
-              data={isSuccess ? problemsData : []}
+              data={isSuccess ? usersData : []}
               onSelectedRowIdsChange={handleSelectedRowIdsChange}
             />
           </div>
@@ -137,7 +149,7 @@ const ProblemsAddDialog: FC<ProblemAddDialogProps> = ({
             <Button variant="secondary" onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleProblemsAdd}>Add</Button>
+            <Button onClick={handleUsersAdd}>Add</Button>
           </div>
         }
       />
@@ -145,4 +157,4 @@ const ProblemsAddDialog: FC<ProblemAddDialogProps> = ({
   );
 };
 
-export default ProblemsAddDialog;
+export default UsersAddDialog;

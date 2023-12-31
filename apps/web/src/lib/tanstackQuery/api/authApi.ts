@@ -6,7 +6,6 @@ const authApi = {
       method: "post",
       url: "/auth/login",
       data: data,
-      withCredentials: true,
     });
     return response.data;
   },
@@ -14,7 +13,6 @@ const authApi = {
     const response = await baseApi({
       method: "get",
       url: "/auth/logout",
-      withCredentials: true,
     });
     return response.data;
   },
@@ -23,7 +21,6 @@ const authApi = {
       method: "post",
       url: "/auth/register",
       data: data,
-      withCredentials: true,
     });
     return response.data;
   },
@@ -31,7 +28,6 @@ const authApi = {
     const response = await baseApi({
       method: "get",
       url: "/auth/isLogin",
-      withCredentials: true,
     });
     return response.data;
   },

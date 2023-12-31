@@ -20,6 +20,16 @@ export type ProblemsTableType = {
   difficultyRating: string;
 };
 
+export type UsersTableType = {
+  index?: number;
+  _id: string;
+  fullName: string;
+  username: string;
+  email: string;
+  imageUrl: string;
+  role: string;
+};
+
 const groupsApi = {
   createGroupMutation: async (data: CreateGroupType) => {
     const response = await baseApi({
@@ -77,6 +87,49 @@ const groupsApi = {
 
     return response.data;
   },
+
+  // user operations
+  getGroupAddedUsersQuery: async (
+    groupId: string
+  ): Promise<Array<UsersTableType>> => {
+    const response = await baseApi({
+      url: `/group/findGroupAddedUsers/${groupId}`,
+      method: "GET",
+    });
+    return response.data;
+  },
+  getGroupNotAddedUsersQuery: async (
+    groupId: string
+  ): Promise<Array<UsersTableType>> => {
+    const response = await baseApi({
+      url: `/group/findGroupNotAddedUsers/${groupId}`,
+      method: "GET",
+    });
+    return response.data;
+  },
+  addUsersToGroupMutation: async (data: {
+    groupId: string;
+    userIds: Array<string>;
+  }) => {
+    const response = await baseApi({
+      url: `/group/addUsersToGroup`,
+      method: "POST",
+      data: data,
+    });
+    return response.data;
+  },
+  removeUserFromGroupMutation: async (data: {
+    groupId: string;
+    userId: string;
+  }) => {
+    const response = await baseApi({
+      url: "/group/removeUserFromGroup",
+      method: "POST",
+      data: data,
+    });
+
+    return response.data;
+  },
 };
 
 export const {
@@ -86,4 +139,8 @@ export const {
   getGroupNotAddedProblemsQuery,
   addProblemsToGroupMutation,
   removeProblemFromGroupMutation,
+  getGroupAddedUsersQuery,
+  getGroupNotAddedUsersQuery,
+  addUsersToGroupMutation,
+  removeUserFromGroupMutation,
 } = groupsApi;

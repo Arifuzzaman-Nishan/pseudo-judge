@@ -39,4 +39,25 @@ export class GroupController {
   removeProblem(@Body() dto: any) {
     return this.groupService.removeProblemFromGroup(dto);
   }
+
+  // user operations
+  @Post('addUsersToGroup')
+  addUsers(@Body() dto: any) {
+    return this.groupService.usersAddedIntoGroup(dto);
+  }
+
+  @Post('removeUserFromGroup')
+  removeUser(@Body() dto: any) {
+    return this.groupService.removeUserFromGroup(dto);
+  }
+
+  @Get('findGroupAddedUsers/:groupId')
+  findGroupUsers(@Param('groupId') groupId: string) {
+    return this.groupService.findGroupAddedUsers(groupId);
+  }
+
+  @Get('findGroupNotAddedUsers/:groupId')
+  findGroupNotAddedUsers(@Param('groupId') groupId: string) {
+    return this.groupService.findGroupNotAddedUsers(groupId);
+  }
 }
