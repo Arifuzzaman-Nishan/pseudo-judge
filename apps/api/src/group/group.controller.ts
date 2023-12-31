@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseBoolPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { GroupService } from './group.service';
 
 @Controller('group')
@@ -11,9 +19,14 @@ export class GroupController {
   }
 
   @Get('findall')
-  findAll() {
-    return this.groupService.findAllGroups();
+  findAll(@Query('enrollmentKey', ParseBoolPipe) enrollmentKey: boolean) {
+    return this.groupService.findAllGroups(enrollmentKey);
   }
+
+  // @Get('findall/:userId')
+  // findAllGroupsByUserId(@Param('userId') userId: string) {
+  //   return this.groupService.findAllGroupsByUserId(userId);
+  // }
 
   @Get('findone/:id')
   findOne(@Param('id') id: string) {
@@ -59,5 +72,16 @@ export class GroupController {
   @Get('findGroupNotAddedUsers/:groupId')
   findGroupNotAddedUsers(@Param('groupId') groupId: string) {
     return this.groupService.findGroupNotAddedUsers(groupId);
+  }
+
+  // enrollment key operations
+  @Post('enrollUserToGroup')
+  enrollUser(@Body() dto: any) {
+    return this.groupService.enrollUserToGroup(dto);
+  }
+
+  @Get('findAllGroupProblems/:userId')
+  findAllGroupProblems(@Param('userId') userId: string) {
+    return this.groupService.findAllGroupProblemsByUserId(userId);
   }
 }

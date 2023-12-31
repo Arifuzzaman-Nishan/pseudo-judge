@@ -17,6 +17,16 @@ import {
 } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
 import Container from "@/components/Shared/Container";
+import { useSelector } from "react-redux";
+import { selectAuth } from "@/lib/redux/slices/authSlice";
+import {
+  GetAllGroupProblemsByUserIdType,
+  getAllGroupProblemsByUserIdQuery,
+} from "@/lib/tanstackQuery/api/groupsApi";
+import { ColumnDef } from "@tanstack/react-table";
+import TableComponent from "../Shared/TableComponent";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 export function ProblemsTable({ datas }: { datas: ProblemsType[] }) {
   const router = useRouter();
@@ -53,11 +63,58 @@ export function ProblemsTable({ datas }: { datas: ProblemsType[] }) {
   );
 }
 
-const Problems = () => {
+const columns: ColumnDef<ProblemsType>[] = [
+  {
+    accessorKey: "index",
+    header: "SI No.",
+    cell: ({ row }) => <div>{row.index + 1}</div>,
+  },
+  {
+    accessorKey: "title",
+    header: "Problem Title",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("title")}</div>
+    ),
+  },
+  {
+    accessorKey: "ojName",
+    header: "OJ Name",
+    cell: ({ row }) => <div>{row.getValue("ojName")}</div>,
+  },
+  {
+    accessorKey: "difficultyRating",
+    header: "Difficulty Rating",
+  },
+  {
+    accessorKey: "solvedCount",
+    header: "Solved Count",
+  },
+  {
+    accessorKey: "totalSubmission",
+    header: "Total Submission",
+  },
+  {
+    header: "Action",
+    cell: ({ row }) => (
+      <>
+        <Link href={`/problem/${row.original._id}`}>
+          <Button>Solve</Button>
+        </Link>
+      </>
+    ),
+  },
+];
+
+const Problems = ({ userId }: { userId: string }) => {
+  console.log("userId is ", userId);
+
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["problems"],
-    queryFn: getProblemsQuery,
+    queryKey: ["group", "problems", userId],
+    queryFn: () => getAllGroupProblemsByUserIdQuery(userId),
+    enabled: !!userId,
   });
+
+  console.log("problems data is ", data);
 
   if (isLoading) return <div>Loading...</div>;
   if (!isLoading && isError) return <div>Error...</div>;
@@ -67,8 +124,11 @@ const Problems = () => {
 
   return (
     <Container>
+      <div>{/* <ProblemsTable datas={data as ProblemsType[]} /> */}</div>
+
       <div>
-        <ProblemsTable datas={data as ProblemsType[]} />
+        <h3>{data?.groupName} Problems</h3>
+        <TableComponent columns={columns} data={data?.problems || []} />
       </div>
     </Container>
   );

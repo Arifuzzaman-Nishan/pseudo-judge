@@ -1,4 +1,5 @@
 import baseApi from "./baseApi";
+import { ProblemsType } from "./problemsApi";
 
 type CreateGroupType = {
   groupName: string;
@@ -6,10 +7,12 @@ type CreateGroupType = {
 };
 
 export type GetGroupsType = {
+  index?: number;
   _id: string;
   groupName: string;
-  enrollmentKey: string;
+  enrollmentKey?: string;
   totalMembers: string;
+  createdAt: string;
 };
 
 export type ProblemsTableType = {
@@ -30,6 +33,13 @@ export type UsersTableType = {
   role: string;
 };
 
+export type GetAllGroupProblemsByUserIdType = {
+  index?: number;
+  _id: string;
+  groupName: string;
+  problems: ProblemsType[];
+};
+
 const groupsApi = {
   createGroupMutation: async (data: CreateGroupType) => {
     const response = await baseApi({
@@ -39,9 +49,11 @@ const groupsApi = {
     });
     return response.data;
   },
-  getGroupsQuery: async (): Promise<Array<GetGroupsType>> => {
+  getGroupsQuery: async (
+    enrollmentKey = true
+  ): Promise<Array<GetGroupsType>> => {
     const response = await baseApi({
-      url: "/group/findall",
+      url: `/group/findall?enrollmentKey=${enrollmentKey}`,
       method: "GET",
     });
     return response.data;
@@ -130,6 +142,32 @@ const groupsApi = {
 
     return response.data;
   },
+
+  // enroll operations
+  enrollUserToGroupMutation: async (data: {
+    groupId: string;
+    userId: string;
+    enrollmentKey: string;
+  }) => {
+    const response = await baseApi({
+      url: "/group/enrollUserToGroup",
+      method: "POST",
+      data: data,
+    });
+
+    return response.data;
+  },
+
+  getAllGroupProblemsByUserIdQuery: async (
+    userId: string
+  ): Promise<GetAllGroupProblemsByUserIdType> => {
+    const response = await baseApi({
+      url: `/group/findAllGroupProblems/${userId}`,
+      method: "GET",
+    });
+
+    return response.data;
+  },
 };
 
 export const {
@@ -143,4 +181,6 @@ export const {
   getGroupNotAddedUsersQuery,
   addUsersToGroupMutation,
   removeUserFromGroupMutation,
+  enrollUserToGroupMutation,
+  getAllGroupProblemsByUserIdQuery,
 } = groupsApi;

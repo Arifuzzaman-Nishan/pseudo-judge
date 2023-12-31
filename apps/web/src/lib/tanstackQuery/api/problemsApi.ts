@@ -2,6 +2,7 @@ import { DifficultyRating, OJName } from "@/types";
 import baseApi from "./baseApi";
 
 export type ProblemsType = {
+  // index?: number;
   _id: string;
   url: string;
   title: string;

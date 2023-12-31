@@ -3,12 +3,14 @@ import { GroupRepository } from './group.repository';
 import { GroupHelperService } from './utils/groupHelper.service';
 import mongoose from 'mongoose';
 import { UserRole } from '@/user/user.schema';
+import { UserRepository } from '@/user/user.repository';
 
 @Injectable()
 export class GroupService {
   constructor(
     private readonly groupRepository: GroupRepository,
     private readonly groupHelperService: GroupHelperService,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async createGroup(dto: any) {
@@ -24,8 +26,22 @@ export class GroupService {
     return result;
   }
 
-  findAllGroups() {
-    return this.groupRepository.findAll({});
+  findAllGroups(enrollmentKey: boolean) {
+    if (enrollmentKey) {
+      return this.groupRepository.findAll(
+        {},
+        {
+          __v: 0,
+          users: 0,
+          problems: 0,
+        },
+      );
+    } else {
+      return this.groupRepository.findAll(
+        {},
+        { enrollmentKey: 0, users: 0, __v: 0, problems: 0 },
+      );
+    }
   }
 
   async findGroupById(id: string) {
@@ -302,5 +318,97 @@ export class GroupService {
     ]);
 
     return users;
+  }
+
+  // enrollment key operations
+  async enrollUserToGroup(dto: any) {
+    const { groupId, userId, enrollmentKey } = dto;
+
+    const userExists = await this.userRepository.findOne({
+      _id: userId,
+    });
+
+    if (!userExists) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (userExists.role === UserRole.ADMIN) {
+      throw new HttpException(
+        'Admin user cannot join groups',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const group = await this.groupRepository.findOne({
+      _id: groupId,
+    });
+
+    if (!group) {
+      throw new HttpException('Group not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (group.enrollmentKey !== enrollmentKey) {
+      throw new HttpException(
+        'Enrollment key is incorrect',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const isUserAlreadyInGroup = group.users.some(
+      (id) => id.toString() === userId,
+    );
+
+    if (isUserAlreadyInGroup) {
+      throw new HttpException(
+        `User ${userExists.username} is already in group`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    group.users.push(userId);
+    await group.save();
+
+    return {
+      message: 'User enrolled successfully',
+    };
+  }
+
+  async findAllGroupProblemsByUserId(userId: string) {
+    const [groupsWithProblems] = await this.groupRepository.aggregate([
+      {
+        $match: {
+          users: { $in: [new mongoose.Types.ObjectId(userId)] },
+        },
+      },
+      {
+        $lookup: {
+          from: 'problems',
+          localField: 'problems',
+          foreignField: '_id',
+          as: 'groupProblems',
+        },
+      },
+      {
+        $unwind: {
+          path: '$groupProblems',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          'groupProblems.problemDetails': 0,
+          'groupProblems.__v': 0,
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          groupName: { $first: '$groupName' },
+          problems: { $push: '$groupProblems' },
+        },
+      },
+    ]);
+
+    return groupsWithProblems || { problems: [], groupName: '', _id: '' };
   }
 }

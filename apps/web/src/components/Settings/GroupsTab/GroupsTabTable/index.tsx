@@ -54,7 +54,7 @@ const GroupsTabTable = ({
 }) => {
   const { isLoading, isError, data, isSuccess } = useQuery({
     queryKey: ["groups"],
-    queryFn: getGroupsQuery,
+    queryFn: () => getGroupsQuery(),
   });
 
   let content = null;
