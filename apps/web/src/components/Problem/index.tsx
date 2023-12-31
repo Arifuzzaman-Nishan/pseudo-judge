@@ -2,10 +2,11 @@
 
 import {
   ProblemDetailsType,
+  ProblemWithDetailsType,
   getProblemWithDetails,
 } from "@/lib/tanstackQuery/api/problemsApi";
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import parse from "html-react-parser";
 import useResizable from "@/hooks/useResizable";
 import ProblemSampleTable from "./ProblemSampleTable";
@@ -13,6 +14,62 @@ import { DividerSvg } from "./Svg";
 import htmlParserOptions from "@/utils/htmlParser";
 import CodeEditor from "../CodeEditor";
 import { codeSlice, useDispatch } from "@/lib/redux";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+type ProblemStatementProps = {
+  pblmDetails: ProblemDetailsType;
+};
+
+const ProblemStatement: FC<ProblemStatementProps> = ({ pblmDetails }) => {
+  return (
+    <>
+      <div>
+        <div className="pblm__description mt-5">
+          {parse(
+            pblmDetails?.problemDescriptionHTML as string,
+            htmlParserOptions
+          )}
+        </div>
+        <div className="pblm__input__description mt-5">
+          <h2>Input</h2>
+          <p>{pblmDetails?.inputDescription}</p>
+        </div>
+        <div className="pblm__output__description mt-5">
+          <h2>Output</h2>
+          <p>{pblmDetails?.outputDescription}</p>
+        </div>
+        <div className="pblm__sample__input__output mt-5">
+          <h2>Sample</h2>
+          <ProblemSampleTable pblmDetails={pblmDetails as ProblemDetailsType} />
+        </div>
+      </div>
+    </>
+  );
+};
+
+type ProblemTabProps = {
+  pblmDetails: ProblemDetailsType;
+};
+const ProblemTab: FC<ProblemTabProps> = ({ pblmDetails }) => {
+  return (
+    <>
+      <Tabs defaultValue="statement">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="statement">Statement</TabsTrigger>
+          <TabsTrigger value="submission">Submission</TabsTrigger>
+        </TabsList>
+        <TabsContent value="statement">
+          <ProblemStatement pblmDetails={pblmDetails as ProblemDetailsType} />
+        </TabsContent>
+        <TabsContent value="submission">
+          <div>
+            <h1>Hello from submission</h1>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </>
+  );
+};
 
 const Problem = ({ problemId }: { problemId: string }) => {
   const { data, isSuccess } = useQuery({
@@ -43,11 +100,14 @@ const Problem = ({ problemId }: { problemId: string }) => {
   });
 
   return (
-    <section className="h-screen flex flex-col pt-16" ref={containerRef}>
-      <div className="mx-auto h-full prose max-w-full overflow-y-hidden">
+    <section
+      className="h-screen flex flex-col pt-16 mx-auto"
+      ref={containerRef}
+    >
+      <div className="h-full prose max-w-full overflow-y-hidden">
         <div className="flex flex-wrap h-full w-full p-2">
           <div
-            className="code__description h-full overflow-y-auto p-4"
+            className="code__description h-full overflow-y-auto px-20"
             style={{
               width: `calc(${widths.leftWidth}% - 4px)`,
             }}
@@ -61,27 +121,9 @@ const Problem = ({ problemId }: { problemId: string }) => {
                 <p>{data?.ojName}</p>
               </div>
             </div>
-            <div className="pblm__description mt-5">
-              {parse(
-                pblmDetails?.problemDescriptionHTML as string,
-                htmlParserOptions
-              )}
-            </div>
-            <div className="pblm__input__description mt-5">
-              <h2>Input</h2>
-              <p>{pblmDetails?.inputDescription}</p>
-            </div>
-            <div className="pblm__output__description mt-5">
-              <h2>Output</h2>
-              <p>{pblmDetails?.outputDescription}</p>
-            </div>
-            <div className="pblm__sample__input__output mt-5">
-              <h2>Sample</h2>
-              <ProblemSampleTable
-                pblmDetails={pblmDetails as ProblemDetailsType}
-              />
-            </div>
+            <ProblemTab pblmDetails={pblmDetails as ProblemDetailsType} />
           </div>
+
           <div
             onMouseDown={startResizing}
             className="group flex h-full items-center justify-center transition hover:bg-blue-300 border w-2 hover:cursor-col-resize pt-28"

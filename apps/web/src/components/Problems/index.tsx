@@ -106,15 +106,11 @@ const columns: ColumnDef<ProblemsType>[] = [
 ];
 
 const Problems = ({ userId }: { userId: string }) => {
-  console.log("userId is ", userId);
-
   const { data, isLoading, isError } = useQuery({
     queryKey: ["group", "problems", userId],
     queryFn: () => getAllGroupProblemsByUserIdQuery(userId),
     enabled: !!userId,
   });
-
-  console.log("problems data is ", data);
 
   if (isLoading) return <div>Loading...</div>;
   if (!isLoading && isError) return <div>Error...</div>;

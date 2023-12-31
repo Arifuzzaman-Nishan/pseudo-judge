@@ -18,11 +18,11 @@ const CodeEditorFooter = () => {
     console.log("the data is ", submitCodeMutation.data);
   }
 
-  const convertToBase64 = (str: string) => {
-    const bytes = new TextEncoder().encode(str);
-    const binString = String.fromCodePoint(...bytes);
-    return btoa(binString);
-  };
+  // const convertToBase64 = (str: string) => {
+  //   const bytes = new TextEncoder().encode(str);
+  //   const binString = String.fromCodePoint(...bytes);
+  //   return btoa(binString);
+  // };
 
   const handleCodeSubmit = () => {
     // console.log("codeState is ", codeState);

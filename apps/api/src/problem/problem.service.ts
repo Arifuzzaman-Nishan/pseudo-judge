@@ -10,6 +10,7 @@ import {
 } from './assets/selector';
 import mongoose from 'mongoose';
 import { VjudgeService } from '@/utils/vjudge/vjudge.service';
+import { v4 as uuidv4 } from 'uuid';
 
 export enum OJName {
   TIMUS = 'timus',
@@ -130,9 +131,10 @@ export class ProblemService {
   }
 
   async submitCode(dto: SubmitCodeDto) {
+    dto.codeStr = `// ${uuidv4()}\n${dto.codeStr}`;
     console.log('dto is ', dto);
-
     await this.vjudgeService.login();
+    console.log('login is done');
     const codeSubmitRes = await this.vjudgeService.submitCode(dto);
 
     console.log('codeSubmitRes is ', codeSubmitRes);
