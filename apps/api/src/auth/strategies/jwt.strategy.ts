@@ -21,14 +21,19 @@ export class JWTStrategy extends PassportStrategy(Strategy) {
 
     super({
       jwtFromRequest: extractJWTFromCookie,
-      secertOrKey: configService.get<string>('JWT_SECRET'),
+      ignoreExpiration: false,
+      secretOrKey: configService.get<string>('JWT_SECRET'),
     });
   }
 
   async validate(payload: any) {
     const { email } = payload;
-    const user = await this.userRepository.findOne({ email });
-    delete user.password;
+    const user = await this.userRepository.findOne(
+      { email },
+      {
+        password: false,
+      },
+    );
 
     if (!user) {
       throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);

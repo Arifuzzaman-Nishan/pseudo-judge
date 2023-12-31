@@ -4,6 +4,9 @@ const nextConfig = {
         remotePatterns: [
             {
                 hostname: 'tailwindui.com'
+            },
+            {
+                hostname: 's.gravatar.com'
             }
         ]
     }

@@ -14,6 +14,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useMutation } from "@tanstack/react-query";
+import { loginMutation } from "@/lib/tanstackQuery/api/authApi";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -25,6 +29,8 @@ const formSchema = z.object({
 });
 
 const LoginForm = () => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,8 +39,22 @@ const LoginForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const mutation = useMutation({
+    mutationFn: loginMutation,
+  });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
+    toast.promise(mutation.mutateAsync(values), {
+      loading: "Logging in...",
+      success: () => {
+        router.push("/problems");
+        return "Logged in successfully";
+      },
+      error: "Failed to login",
+    });
+
+    // router.push("/problems");
   };
 
   return (

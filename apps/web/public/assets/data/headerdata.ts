@@ -6,28 +6,18 @@ const headerData = [
   },
   {
     key: 2,
-    name: "Dashboard",
-    path: "/dashboard",
-  },
-  {
-    key: 3,
     name: "Groups",
     path: "/groups",
   },
   {
-    key: 4,
+    key: 3,
     name: "Problems",
     path: "/problems",
   },
   {
-    key: 5,
+    key: 4,
     name: "Ranks",
     path: "/ranks",
-  },
-  {
-    key: 6,
-    name: "Settings",
-    path: "/settings",
   },
 ];
 

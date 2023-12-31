@@ -13,7 +13,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
+import { registerMuation } from "@/lib/tanstackQuery/api/authApi";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type FormFieldType =
   | "password"
@@ -100,14 +103,23 @@ const RegisterForm = () => {
     },
   });
 
+  const mutation = useMutation({
+    mutationFn: registerMuation,
+  });
+
+  const router = useRouter();
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-    const res = await axios({
-      method: "POST",
-      url: "/api/register",
-      data: values,
+    toast.promise(mutation.mutateAsync(values), {
+      loading: "Registering...",
+      success: () => {
+        router.push("/problems");
+        return "Registered successfully";
+      },
+      error: "Something went wrong",
     });
-    console.log("axios res is ", res.data);
+
+    // form.reset();
   };
 
   return (

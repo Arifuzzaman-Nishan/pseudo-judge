@@ -19,6 +19,11 @@ export class User {
 
   @Prop({
     required: true,
+  })
+  imageUrl: string;
+
+  @Prop({
+    required: true,
     unique: true,
   })
   username: string;

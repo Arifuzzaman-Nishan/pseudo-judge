@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   Request,
   Response,
@@ -36,5 +37,20 @@ export class AuthController {
     });
 
     res.send(loginData);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('isLogin')
+  isLogin(@Request() req: Req) {
+    const user = req.user;
+    return user;
+  }
+
+  @Get('logout')
+  @UseGuards(AuthGuard('jwt'))
+  async logout(@Request() req: Req, @Response() res: Res) {
+    // const user = req.user;
+    res.clearCookie('auth', { httpOnly: true });
+    res.send({ message: 'Logout Successful' });
   }
 }

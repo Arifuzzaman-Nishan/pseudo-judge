@@ -3,7 +3,7 @@ import { Outfit } from "next/font/google";
 import "@/styles/globals.css";
 // import { Toaster } from "@/components/ui/toaster";
 
-import Provider from "@/lib/tanstackQuery/utils/TanstackProvider";
+import TanstackProvider from "@/lib/tanstackQuery/utils/TanstackProvider";
 import Layout from "@/components/Shared/Layout";
 import ReduxProvider from "@/lib/redux/provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -25,10 +25,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={outfit.className} suppressHydrationWarning={true}>
         <ReduxProvider>
-          <Layout>
-            <Provider>{children}</Provider>
-            <Toaster />
-          </Layout>
+          <TanstackProvider>
+            <Layout>
+              {children}
+              <Toaster />
+            </Layout>
+          </TanstackProvider>
         </ReduxProvider>
       </body>
     </html>

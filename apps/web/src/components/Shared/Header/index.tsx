@@ -4,16 +4,130 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import pseudoJudgeLogo from "../../../../public/assets/images/logo1.png";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import headerData from "../../../../public/assets/data/headerdata";
 import { Button } from "@/components/ui/button";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { isLoginQuery, logoutMutation } from "@/lib/tanstackQuery/api/authApi";
+import { useDispatch } from "@/lib/redux";
+import { authSlice, selectAuth } from "@/lib/redux/slices/authSlice";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+import { LogOut, Settings, User } from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
+import { useSelector } from "react-redux";
+
+const HeaderUser = ({ data }: any) => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const mutation = useMutation({
+    mutationFn: logoutMutation,
+  });
+
+  const handleLogout = () => {
+    toast.promise(mutation.mutateAsync(), {
+      loading: "Logging out...",
+      success: () => {
+        dispatch(authSlice.actions.logoutAuthData());
+        router.push("/login");
+        return "Logout successfully";
+      },
+      error: "Failed to logout",
+    });
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild className="cursor-pointer">
+        <Avatar>
+          <AvatarImage
+            loading="lazy"
+            src={data.imageUrl}
+            alt={data.username}
+            width={140}
+            height={140}
+          />
+          <AvatarFallback>
+            {data.fullName.match(/\b\w/g).join("")}
+          </AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel className="text-center capitalize">
+          {data.username}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem>
+            <User className="mr-2 h-4 w-4" />
+            <span>Profile</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Settings className="mr-2 h-4 w-4" />
+            <span>
+              <Link href="/settings">Settings</Link>
+            </span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleLogout}>
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Log out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const auth = useSelector(selectAuth);
+
   const pathname = usePathname();
-  const [isClient, setIsClient] = useState(false);
+  // const [isClient, setIsClient] = useState(false);
+  // useEffect(() => {
+  //   setIsClient(true);
+  // }, []);
+
+  const { data, isSuccess } = useQuery({
+    queryKey: ["isLogin"],
+    queryFn: isLoginQuery,
+    retry: false,
+  });
+
+  console.log("login user data is ", data);
+
+  let content = (
+    <Link href="/login">
+      <Button>Login</Button>
+    </Link>
+  );
+  if (isSuccess) {
+    content = <HeaderUser data={data} />;
+  }
+
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    if (isSuccess) {
+      const { _id, ...rest } = data;
+      dispatch(
+        authSlice.actions.loginAuthData({
+          userId: _id,
+          isLogin: true,
+          ...rest,
+        })
+      );
+    }
+  }, [data, dispatch, isSuccess, pathname]);
 
   return (
     <>
@@ -38,7 +152,7 @@ const Header = () => {
                 height="0"
                 sizes="(min-width: 1200px) 3vw, (min-width: 1024px) 7vw, (min-width:425px) 9vw, 17vw"
                 className="w-full h-auto"
-                alt="redditors logo"
+                alt="psuedojudge logo"
               />
             </Link>
             <div className="sm:hidden">
@@ -78,39 +192,34 @@ const Header = () => {
             className="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:block"
           >
             <div className="flex flex-col gap-y-4 gap-x-0 mt-5 sm:flex-row sm:items-center sm:justify-end sm:gap-y-0 sm:gap-x-7 sm:mt-0 sm:pl-7">
-              {isClient &&
-                headerData
-                  // .filter((item) =>
-                  //   (!auth?.username && item.path === "/users") ||
-                  //   (!auth?.username && item.path === "/settings")
-                  //     ? false
-                  //     : true
-                  // )
-                  .map((item) => {
-                    const { path } = item;
-                    const isActive = path === pathname ?? false;
+              {headerData
+                .filter((item) =>
+                  (!auth?.isLogin && item.path === "/problems") ||
+                  (!auth?.isLogin && item.path === "/groups")
+                    ? false
+                    : true
+                )
+                .map((item) => {
+                  const { path } = item;
+                  const isActive = path === pathname ?? false;
 
-                    return (
-                      <Link
-                        key={item.key}
-                        className={`font-medium sm:py-6 ${
-                          isActive
-                            ? "text-blue-500 hover:text-blue-600"
-                            : "text-gray-500 hover:text-blue-600"
-                        }  `}
-                        href={item.path}
-                        aria-current="page"
-                      >
-                        {item.name}
-                      </Link>
-                    );
-                  })}
+                  return (
+                    <Link
+                      key={item.key}
+                      className={`font-medium sm:py-6 ${
+                        isActive
+                          ? "text-blue-500 hover:text-blue-600"
+                          : "text-gray-500 hover:text-blue-600"
+                      }  `}
+                      href={item.path}
+                      aria-current="page"
+                    >
+                      {item.name}
+                    </Link>
+                  );
+                })}
 
-              <div>
-                <Link href="/login">
-                  <Button>Login</Button>
-                </Link>
-              </div>
+              <div>{content}</div>
             </div>
           </div>
         </nav>

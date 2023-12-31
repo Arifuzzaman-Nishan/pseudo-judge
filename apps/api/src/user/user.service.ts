@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcrypt';
+import gravatar from 'gravatar';
 
 @Injectable()
 export class UserService {
@@ -25,10 +26,18 @@ export class UserService {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
+    const imageUrl = gravatar.url(dto.email, {
+      protocol: 'https',
+      s: '70',
+    });
+
+    console.log('imageUrl is ', imageUrl);
+
     const newUser = (
       await this.userRepository.create({
         ...restdto,
         password: passwordHash,
+        imageUrl,
       })
     ).toObject({
       versionKey: false,
@@ -39,4 +48,6 @@ export class UserService {
       ...newUser,
     };
   }
+
+  async loginUser() {}
 }
