@@ -28,7 +28,7 @@ const DialogComponent: FC<DialogComponentProps> = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className=" overflow-y-scroll max-h-[90vh] max-w-4xl">
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
