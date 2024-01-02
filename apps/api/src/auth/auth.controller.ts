@@ -41,9 +41,10 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('isLogin')
-  isLogin(@Request() req: Req) {
+  async isLogin(@Request() req: Req) {
     const user = req.user;
-    return user;
+    const data = await this.authService.isLogin((user as any)._id);
+    return data;
   }
 
   @Get('logout')

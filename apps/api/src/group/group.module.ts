@@ -14,5 +14,6 @@ import { UserModule } from '@/user/user.module';
   ],
   controllers: [GroupController],
   providers: [GroupService, GroupRepository, GroupHelperService],
+  exports: [GroupRepository],
 })
 export class GroupModule {}

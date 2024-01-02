@@ -6,6 +6,7 @@ export type CodeSliceState = {
   lang: CodeLang;
   ojName: string;
   ojProblemId: string;
+  problemId: string;
 };
 
 const initialState: CodeSliceState = {
@@ -14,6 +15,7 @@ const initialState: CodeSliceState = {
   lang: CodeLang.CPP,
   ojName: "",
   ojProblemId: "",
+  problemId: "",
 };
 
 export const codeSlice = createSlice({
@@ -31,6 +33,16 @@ export const codeSlice = createSlice({
     },
     setOjProblemId(state, action: PayloadAction<string>) {
       state.ojProblemId = action.payload;
+    },
+    setProblemId(state, action: PayloadAction<string>) {
+      state.problemId = action.payload;
+    },
+    setEmpty(state) {
+      // state.codeStr = "";
+      // state.lang = ;
+      // state.ojName = "";
+      // state.ojProblemId = "";
+      // state.problemId = "";
     },
   },
 });

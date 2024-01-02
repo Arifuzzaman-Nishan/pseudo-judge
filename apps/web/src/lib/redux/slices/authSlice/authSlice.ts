@@ -10,6 +10,8 @@ export type AuthSliceState = {
   role: string;
   isLogin: boolean;
   imageUrl: string;
+  groupId: string | null;
+  isUserInGroup: boolean;
 };
 
 const initialState: AuthSliceState = {
@@ -20,10 +22,12 @@ const initialState: AuthSliceState = {
   role: "",
   isLogin: false,
   imageUrl: "",
+  groupId: null,
+  isUserInGroup: false,
 };
 
 export const authSlice = createSlice({
-  name: "code",
+  name: "auth",
   initialState,
   reducers: {
     loginAuthData(state, action: PayloadAction<AuthSliceState>) {

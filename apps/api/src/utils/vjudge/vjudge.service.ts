@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { CookieJar } from 'tough-cookie';
 import { wrapper } from 'axios-cookiejar-support';
 import FormData from 'form-data';
@@ -40,8 +40,8 @@ export class VjudgeService {
     ojProblemId: string;
     codeStr: string;
   }) {
-    console.log('ojName is ', ojName);
-    console.log('ojProblemId', ojProblemId);
+    // console.log('ojName is ', ojName);
+    // console.log('ojProblemId', ojProblemId);
 
     const submitFormData = new FormData();
     submitFormData.append('method', '0');
@@ -70,20 +70,20 @@ export class VjudgeService {
   }
 
   async solution({ runId }: { runId: string }) {
-    let processing = true;
-    let res: AxiosResponse<any, any>;
-    while (processing) {
-      res = await axiosClient({
-        url: `https://vjudge.net/solution/data/${runId}`,
-        method: 'get',
-        withCredentials: true,
-        headers: {
-          'User-Agent':
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        },
-      });
-      processing = res.data.processing;
-    }
+    // const processing = true;
+    // let res: AxiosResponse<any, any>;
+    // while (processing) {
+    const res = await axiosClient({
+      url: `https://vjudge.net/solution/data/${runId}`,
+      method: 'get',
+      withCredentials: true,
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      },
+    });
+    // processing = res.data.processing;
+    // }
     return res.data;
   }
 }

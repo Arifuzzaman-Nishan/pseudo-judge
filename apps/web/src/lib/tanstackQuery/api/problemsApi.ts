@@ -25,13 +25,6 @@ export type ProblemDetailsType = {
   notes: string;
 };
 
-export type SubmitCodeType = {
-  codeStr: string;
-  lang: string;
-  ojName: string;
-  ojProblemId: string;
-};
-
 export type ProblemWithDetailsType = {
   problemDetails: ProblemDetailsType;
 } & ProblemsType;
@@ -40,6 +33,40 @@ type AddProblemMutationType = {
   url: string;
   ojName: OJName;
   difficultyRating: DifficultyRating;
+};
+
+export type SubmitCodeType = {
+  codeStr: string;
+  lang: string;
+  ojName: string;
+  ojProblemId: string;
+};
+
+export type SolutionType = {
+  status: string;
+  processing: boolean;
+  runtime: string | null;
+  language: string;
+  runId?: number;
+  code: string;
+  memory: string | null;
+};
+
+type ProblemSubmissionsArgsType = {
+  userId: string;
+  problemId: string;
+  groupId: string;
+};
+
+export type ProblemSubmissionReturnType = {
+  _id: string;
+  status: string;
+  runtime: number;
+  language: string;
+  code: string;
+  memory: number;
+  createdAt: string;
+  title: string;
 };
 
 const problemsApi = {
@@ -59,14 +86,7 @@ const problemsApi = {
     });
     return response.data;
   },
-  submitCode: async (data: SubmitCodeType): Promise<any> => {
-    const response = await baseApi({
-      url: "/problem/submission",
-      method: "POST",
-      data: data,
-    });
-    return response.data;
-  },
+
   addProblemMutation: async (data: AddProblemMutationType) => {
     const response = await baseApi({
       url: "/problem/create",
@@ -76,11 +96,37 @@ const problemsApi = {
 
     return response.data;
   },
+  submitCode: async (data: SubmitCodeType): Promise<{ runId: number }> => {
+    const response = await baseApi({
+      url: "/problem/submitCode",
+      method: "POST",
+      data: data,
+    });
+    return response.data;
+  },
+  solutionMutation: async (runId: number): Promise<SolutionType> => {
+    const response = await baseApi({
+      url: `/problem/solution/${runId}`,
+      method: "POST",
+    });
+    return response.data;
+  },
+  getProblemSubmissionsQuery: async (
+    data: ProblemSubmissionsArgsType
+  ): Promise<Array<ProblemSubmissionReturnType>> => {
+    const response = await baseApi({
+      url: `/problem/findProblemSubmissions/${data.userId}?problemId=${data.problemId}&groupId=${data.groupId}`,
+      method: "GET",
+    });
+    return response.data;
+  },
 };
 
 export const {
   getProblemsQuery,
   getProblemWithDetails,
   submitCode,
+  solutionMutation,
   addProblemMutation,
+  getProblemSubmissionsQuery,
 } = problemsApi;

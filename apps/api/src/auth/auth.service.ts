@@ -1,8 +1,10 @@
 import { JWTService } from '@/auth/jwt/jwt.service';
+import { GroupRepository } from '@/group/group.repository';
 import { UserRepository } from '@/user/user.repository';
 import { UserService } from '@/user/user.service';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -10,6 +12,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly jwtService: JWTService,
     private readonly userService: UserService,
+    private readonly groupRepository: GroupRepository,
   ) {}
 
   async register(dto: any) {
@@ -58,5 +61,39 @@ export class AuthService {
       return user;
     }
     return null;
+  }
+
+  async isLogin(userId: string) {
+    const user = (
+      await this.userRepository.findOne(
+        {
+          _id: userId,
+        },
+        {
+          password: 0,
+          __v: 0,
+        },
+      )
+    ).toObject();
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    const group = await this.groupRepository.findOne({
+      users: {
+        $in: [new mongoose.Types.ObjectId(userId)],
+      },
+    });
+
+    // Check if group is not null before calling toObject
+    const groupObject = group ? group.toObject() : null;
+    const isUserInGroup = groupObject != null;
+
+    return {
+      groupId: isUserInGroup ? groupObject._id : null,
+      isUserInGroup,
+      ...user,
+    };
   }
 }

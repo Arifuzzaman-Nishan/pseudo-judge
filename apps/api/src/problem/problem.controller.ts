@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ProblemService } from './problem.service';
 import { DifficultyRating } from './schemas/problem.schema';
 
@@ -32,8 +32,25 @@ export class ProblemController {
     return this.problemService.findGroupProblems(groupId);
   }
 
-  @Post('submission')
+  @Post('submitCode')
   async submitCode(@Body() dto: any) {
     return this.problemService.submitCode(dto);
+  }
+
+  @Post('solution/:runId')
+  async solution(@Param('runId') runId: any) {
+    return this.problemService.solution(runId);
+  }
+
+  // problem submission operations
+  @Get('findProblemSubmissions/:userId')
+  async findProblemSubmissions(
+    @Param('userId') userId: string,
+    @Query() query: { problemId?: string; groupId: string },
+  ) {
+    return this.problemService.findProblemSubmissions({
+      userId,
+      query,
+    });
   }
 }

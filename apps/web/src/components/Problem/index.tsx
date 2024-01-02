@@ -2,19 +2,29 @@
 
 import {
   ProblemDetailsType,
+  ProblemSubmissionReturnType,
   ProblemWithDetailsType,
+  getProblemSubmissionsQuery,
   getProblemWithDetails,
 } from "@/lib/tanstackQuery/api/problemsApi";
 import { useQuery } from "@tanstack/react-query";
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import parse from "html-react-parser";
 import useResizable from "@/hooks/useResizable";
 import ProblemSampleTable from "./ProblemSampleTable";
 import { DividerSvg } from "./Svg";
 import htmlParserOptions from "@/utils/htmlParser";
 import CodeEditor from "../CodeEditor";
-import { codeSlice, useDispatch } from "@/lib/redux";
+import { codeSlice, selectCode, useDispatch, useSelector } from "@/lib/redux";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { selectAuth } from "@/lib/redux/slices/authSlice";
+import { ColumnDef } from "@tanstack/react-table";
+import { DateTime } from "luxon";
+import { Button } from "../ui/button";
+import TableComponent from "../Shared/TableComponent";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import DialogComponent from "../Shared/DialogComponent";
 
 type ProblemStatementProps = {
   pblmDetails: ProblemDetailsType;
@@ -47,6 +57,98 @@ const ProblemStatement: FC<ProblemStatementProps> = ({ pblmDetails }) => {
   );
 };
 
+const CodeDialog = ({ codeStr }: { codeStr: string }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const content = (
+    <SyntaxHighlighter language="cpp" showLineNumbers style={docco}>
+      {codeStr}
+    </SyntaxHighlighter>
+  );
+
+  return (
+    <>
+      <Button onClick={() => setIsOpen(true)}>View Code</Button>
+      <DialogComponent
+        title="Code"
+        content={content}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
+    </>
+  );
+};
+
+const relativeTime = (time: string) => {
+  const dt = DateTime.fromISO(time);
+  return dt.toRelative();
+};
+
+const columns: ColumnDef<ProblemSubmissionReturnType>[] = [
+  {
+    accessorKey: "index",
+    header: "SI No.",
+    cell: ({ row }) => <div>{row.index + 1}</div>,
+  },
+  {
+    accessorKey: "title",
+    header: "Problem title",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("title")}</div>
+    ),
+  },
+  {
+    accessorKey: "language",
+    header: "Language",
+    cell: ({ row }) => <div>{row.getValue("language")}</div>,
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Submitted at",
+    cell: ({ row }) => <div>{relativeTime(row.getValue("createdAt"))}</div>,
+  },
+  {
+    accessorKey: "status",
+    header: "Verdict",
+    cell: ({ row }) => <div>{row.getValue("status")}</div>,
+  },
+  {
+    header: "Action",
+    cell: ({ row }) => (
+      <>
+        <CodeDialog codeStr={row.original.code} />
+      </>
+    ),
+  },
+];
+
+const ProblemSubmissions = () => {
+  const authState = useSelector(selectAuth);
+  const codeState = useSelector(selectCode);
+
+  const { data, isSuccess } = useQuery({
+    queryKey: [
+      "problemSubmissions",
+      authState.groupId,
+      authState.userId,
+      codeState.problemId,
+    ],
+    queryFn: () =>
+      getProblemSubmissionsQuery({
+        userId: authState.userId,
+        groupId: authState.groupId as string,
+        problemId: codeState.problemId,
+      }),
+    enabled: !!authState.groupId,
+  });
+
+  return (
+    <>
+      <TableComponent columns={columns} data={isSuccess ? data : []} />
+    </>
+  );
+};
+
 type ProblemTabProps = {
   pblmDetails: ProblemDetailsType;
 };
@@ -62,9 +164,7 @@ const ProblemTab: FC<ProblemTabProps> = ({ pblmDetails }) => {
           <ProblemStatement pblmDetails={pblmDetails as ProblemDetailsType} />
         </TabsContent>
         <TabsContent value="submission">
-          <div>
-            <h1>Hello from submission</h1>
-          </div>
+          <ProblemSubmissions />
         </TabsContent>
       </Tabs>
     </>
@@ -78,6 +178,12 @@ const Problem = ({ problemId }: { problemId: string }) => {
   });
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (problemId) {
+      dispatch(codeSlice.actions.setProblemId(problemId));
+    }
+  }, [dispatch, problemId]);
 
   useEffect(() => {
     if (isSuccess && data) {

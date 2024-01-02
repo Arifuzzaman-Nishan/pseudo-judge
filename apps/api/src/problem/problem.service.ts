@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CrawlProblemsDto } from './problem.controller';
 import { PuppeteerService } from '@/utils/puppeteer/puppeteer.service';
 import { ProblemRepository } from './repositories/problem.repository';
@@ -11,6 +11,9 @@ import {
 import mongoose from 'mongoose';
 import { VjudgeService } from '@/utils/vjudge/vjudge.service';
 import { v4 as uuidv4 } from 'uuid';
+import { UserRepository } from '@/user/user.repository';
+import { ProblemSubmissionRepository } from './repositories/problemSubmission.repository';
+import { GroupRepository } from '@/group/group.repository';
 
 export enum OJName {
   TIMUS = 'timus',
@@ -25,6 +28,9 @@ export type SubmitCodeDto = {
   lang: string;
   ojName: string;
   ojProblemId: string;
+  problemId: string;
+  userId: string;
+  groupId: string;
 };
 
 @Injectable()
@@ -34,6 +40,9 @@ export class ProblemService {
     private readonly problemRepository: ProblemRepository,
     private readonly problemDetailsRepository: ProblemDetailsRepository,
     private readonly vjudgeService: VjudgeService,
+    private readonly userRepository: UserRepository,
+    private readonly problemSubmissionRepository: ProblemSubmissionRepository,
+    private readonly groupRepository: GroupRepository,
   ) {}
 
   async crawlProblems(dto: CrawlProblemsDto) {
@@ -130,27 +139,148 @@ export class ProblemService {
     return problemDetails;
   }
 
+  async findGroupProblems(groupId: string) {
+    const problems = await this.problemRepository.findAll({
+      groupId,
+    });
+    return problems;
+  }
+
   async submitCode(dto: SubmitCodeDto) {
+    const { userId, problemId, groupId } = dto;
+
+    console.log('submit code dto is ', dto);
+
+    const user = await this.userRepository.findOne({
+      _id: userId,
+    });
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    const problem = await this.problemRepository.findOne({
+      _id: problemId,
+    });
+
+    if (!problem) {
+      throw new HttpException('Problem not found', HttpStatus.NOT_FOUND);
+    }
+
+    const group = await this.groupRepository.findOne({
+      _id: groupId,
+    });
+
+    if (!group) {
+      throw new HttpException('Group not found', HttpStatus.NOT_FOUND);
+    }
+
     dto.codeStr = `// ${uuidv4()}\n${dto.codeStr}`;
     console.log('dto is ', dto);
     await this.vjudgeService.login();
     console.log('login is done');
     const codeSubmitRes = await this.vjudgeService.submitCode(dto);
 
-    console.log('codeSubmitRes is ', codeSubmitRes);
-    const result = await this.vjudgeService.solution({
-      runId: codeSubmitRes.runId,
-    });
-    console.log('result is ', result);
-    return result;
+    // console.log('codeSubmitRes is ', codeSubmitRes.runId);
 
-    // const { ojName, problemNum, code } = dto;
+    await this.problemSubmissionRepository.create({
+      code: dto.codeStr,
+      language: dto.lang,
+      runId: codeSubmitRes.runId,
+      user: user,
+      problem: problem,
+      group: group,
+    });
+
+    return codeSubmitRes;
+
+    // console.log('codeSubmitRes is ', codeSubmitRes);
+    // const result = await this.vjudgeService.solution({
+    //   runId: codeSubmitRes.runId,
+    // });
+    // console.log('result is ', result);
+    // return result;
   }
 
-  async findGroupProblems(groupId: string) {
-    const problems = await this.problemRepository.findAll({
-      groupId,
+  async solution(runId: string) {
+    console.log('runId is ', runId);
+
+    const result = await this.vjudgeService.solution({
+      runId: runId,
     });
-    return problems;
+
+    console.log('code solution is ', result);
+
+    return this.problemSubmissionRepository.findOneAndUpdate(
+      {
+        runId: runId,
+      },
+      {
+        status: result.status,
+        processing: result.processing,
+        runtime: result?.runtime,
+        memory: result?.memory,
+      },
+    );
+  }
+
+  async findProblemSubmissions({
+    userId,
+    query,
+  }: {
+    userId: string;
+    query: {
+      problemId?: string;
+      groupId: string;
+    };
+  }) {
+    console.log('query is ', query);
+    const { problemId, groupId } = query;
+
+    const user = await this.userRepository.findOne({
+      _id: userId,
+    });
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    return this.problemSubmissionRepository.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(userId),
+          problem: new mongoose.Types.ObjectId(problemId),
+          group: new mongoose.Types.ObjectId(groupId),
+        },
+      },
+      {
+        $lookup: {
+          from: 'problems',
+          localField: 'problem',
+          foreignField: '_id',
+          as: 'problem',
+        },
+      },
+      {
+        $unwind: {
+          path: '$problem',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          status: 1,
+          processing: 1,
+          runtime: 1,
+          language: 1,
+          runId: 1,
+          code: 1,
+          memory: 1,
+          title: '$problem.title',
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      },
+    ]);
   }
 }

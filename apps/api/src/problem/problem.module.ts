@@ -11,6 +11,13 @@ import {
 import { ProblemRepository } from './repositories/problem.repository';
 import { ProblemDetailsRepository } from './repositories/problemDetails.repository';
 import { VjudgeService } from '@/utils/vjudge/vjudge.service';
+import { UserModule } from '@/user/user.module';
+import {
+  ProblemSubmission,
+  ProblemSubmissionSchema,
+} from './schemas/problemSubmission.schema';
+import { ProblemSubmissionRepository } from './repositories/problemSubmission.repository';
+import { GroupModule } from '@/group/group.module';
 
 @Module({
   imports: [
@@ -23,7 +30,13 @@ import { VjudgeService } from '@/utils/vjudge/vjudge.service';
         name: ProblemDetail.name,
         schema: ProblemDetailsSchema,
       },
+      {
+        name: ProblemSubmission.name,
+        schema: ProblemSubmissionSchema,
+      },
     ]),
+    UserModule,
+    GroupModule,
   ],
   controllers: [ProblemController],
   providers: [
@@ -32,6 +45,7 @@ import { VjudgeService } from '@/utils/vjudge/vjudge.service';
     VjudgeService,
     ProblemRepository,
     ProblemDetailsRepository,
+    ProblemSubmissionRepository,
   ],
 })
 export class ProblemsModule {}
