@@ -33,16 +33,10 @@ export class PuppeteerService {
   }
 
   async goto(url: string) {
-    await this.page.goto(url, {
-      waitUntil: 'networkidle2',
-    });
+    await this.page.goto(url);
   }
 
-  async getDataFromHTMLSelector(
-    selector:
-      | string
-      | (() => string | Array<{ descType: string; descValue: string }>),
-  ) {
+  async getDataFromHTMLSelector(selector: string | (() => string)) {
     if (typeof selector === 'string') {
       return await this.page.evaluate((selector) => {
         const element = document.querySelector<HTMLElement>(selector);

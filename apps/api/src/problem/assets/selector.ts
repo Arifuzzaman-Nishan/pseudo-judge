@@ -10,6 +10,7 @@ export type ProblemKey =
   | 'timeLimit'
   | 'memoryLimit'
   | 'problemDescriptionHTML'
+  | 'pdfUrl'
   | 'inputDescription'
   | 'outputDescription'
   | 'sampleInput'
@@ -152,8 +153,54 @@ export const timusOjSelectors: Array<SelectorType> = [
   },
 ];
 
-export const codeforcesOjSelectors: Array<SelectorType> = [];
+export const uvaOjSelectors: Array<SelectorType> = [
+  {
+    key: 'pdfUrl',
+    selector: () => {
+      const element =
+        document.querySelector<HTMLIFrameElement>('#frame-description');
 
-export const uvaOjSelectors: Array<SelectorType> = [];
+      if (!element) {
+        return null;
+      }
+
+      const pdfUrl = element?.src;
+
+      return pdfUrl;
+    },
+  },
+  { key: 'title', selector: 'table > tbody > tr:nth-child(2) > td > h3' },
+  {
+    key: 'ojProblemId',
+    selector: () => {
+      const element = document.querySelector<HTMLElement>(
+        'table > tbody > tr:nth-child(2) > td > h3',
+      );
+      if (!element) {
+        return null;
+      }
+      const title = element.innerText.trim();
+      const ojProblemId = title.match(/\d+/)[0];
+      return ojProblemId;
+    },
+  },
+  {
+    key: 'timeLimit',
+    selector: () => {
+      const element = document.querySelector<HTMLElement>(
+        '#col3_content_wrapper > table > tbody > tr:nth-child(2) > td',
+      );
+
+      if (!element) {
+        return null;
+      }
+
+      const timeLimit = element.innerText.trim().match(/Time limit: (.*)/)[1];
+      return timeLimit;
+    },
+  },
+];
+
+export const codeforcesOjSelectors: Array<SelectorType> = [];
 
 export const spojOjSelectors: Array<SelectorType> = [];

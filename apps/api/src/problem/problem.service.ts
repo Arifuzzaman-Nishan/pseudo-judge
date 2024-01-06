@@ -7,6 +7,7 @@ import {
   ProblemKey,
   lightOjSelectors,
   timusOjSelectors,
+  uvaOjSelectors,
 } from './assets/selector';
 import mongoose from 'mongoose';
 import { VjudgeService } from '@/utils/vjudge/vjudge.service';
@@ -18,7 +19,7 @@ import { GroupRepository } from '@/group/group.repository';
 export enum OJName {
   TIMUS = 'timus',
   CODEFORCES = 'codeforces',
-  UVA = 'uva',
+  UVA = 'UVA',
   SPOJ = 'spoj',
   LOJ = 'LightOJ',
 }
@@ -46,9 +47,11 @@ export class ProblemService {
   ) {}
 
   async crawlProblems(dto: CrawlProblemsDto) {
+    console.log('dto is ', dto);
+
     const { url, ojName } = dto;
     await this.puppeteerService.launch({
-      headless: 'new',
+      headless: false,
     });
 
     await this.puppeteerService.goto(url);
@@ -59,22 +62,26 @@ export class ProblemService {
       timeLimit: '',
       memoryLimit: '',
       problemDescriptionHTML: '',
+      pdfUrl: '',
       inputDescription: '',
       sampleInput: '',
       sampleOutput: '',
       outputDescription: '',
     };
 
-    let selectorData = lightOjSelectors;
+    let selectorData = [];
     if (ojName === OJName.LOJ) {
       selectorData = lightOjSelectors;
     } else if (ojName === OJName.TIMUS) {
       selectorData = timusOjSelectors;
+    } else if (ojName === OJName.UVA) {
+      selectorData = uvaOjSelectors;
     }
 
     await Promise.all(
       selectorData.map(async (item) => {
         if (item.key === 'problemDescriptionHTML') {
+          console.log('item.key problemdescription is ', item.key);
           if (ojName === OJName.LOJ) {
             problemData[item.key] =
               await this.puppeteerService.getLightOjProblemDescription(
@@ -93,9 +100,20 @@ export class ProblemService {
       }),
     );
 
+    if (ojName === OJName.UVA) {
+      const newUrl = `https://vjudge.net/problem/${ojName}-${problemData.ojProblemId}`;
+      await this.puppeteerService.goto(newUrl);
+
+      problemData['pdfUrl'] =
+        await this.puppeteerService.getDataFromHTMLSelector(
+          selectorData[0].selector,
+        );
+    }
+
     await this.puppeteerService.close();
 
     const { title, ojProblemId, ...problemDetailsData } = problemData;
+
     const problemDetails =
       await this.problemDetailsRepository.create(problemDetailsData);
 
@@ -184,6 +202,7 @@ export class ProblemService {
     // console.log('codeSubmitRes is ', codeSubmitRes.runId);
 
     await this.problemSubmissionRepository.create({
+      status: 'Pending',
       code: dto.codeStr,
       language: dto.lang,
       runId: codeSubmitRes.runId,
@@ -279,6 +298,11 @@ export class ProblemService {
           title: '$problem.title',
           createdAt: 1,
           updatedAt: 1,
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
         },
       },
     ]);

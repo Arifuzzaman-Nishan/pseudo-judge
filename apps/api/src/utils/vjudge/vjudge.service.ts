@@ -3,6 +3,7 @@ import axios from 'axios';
 import { CookieJar } from 'tough-cookie';
 import { wrapper } from 'axios-cookiejar-support';
 import FormData from 'form-data';
+import { OJName } from '@/problem/problem.service';
 
 const jar = new CookieJar();
 const axiosClient = wrapper(axios.create({ jar }));
@@ -42,15 +43,19 @@ export class VjudgeService {
   }) {
     // console.log('ojName is ', ojName);
     // console.log('ojProblemId', ojProblemId);
-
     const submitFormData = new FormData();
     submitFormData.append('method', '0');
-    submitFormData.append('language', 'cpp14');
     submitFormData.append('open', '1');
     submitFormData.append('oj', ojName);
     submitFormData.append('probNum', ojProblemId);
     submitFormData.append('captcha', '');
     submitFormData.append('source', codeStr);
+
+    if (ojName === OJName.UVA) {
+      submitFormData.append('language', '5');
+    } else if (ojName === OJName.LOJ) {
+      submitFormData.append('language', 'cpp14');
+    }
 
     try {
       const res = await axiosClient({

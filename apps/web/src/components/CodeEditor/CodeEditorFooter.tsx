@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { selectCode, useSelector } from "@/lib/redux";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -105,29 +105,29 @@ const CodeEditorFooter = () => {
   const submitCodeMutation = useMutation({
     mutationKey: ["submitCode"],
     mutationFn: submitCode,
-    // onSuccess: (data) => {
-    //   queryClient.invalidateQueries({
-    //     queryKey: [
-    //       "problemSubmissions",
-    //       authState.groupId,
-    //       authState.userId,
-    //       codeState.problemId,
-    //     ],
-    //   });
-    // },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "problemSubmissions",
+          authState.groupId,
+          authState.userId,
+          codeState.problemId,
+        ],
+      });
+    },
   });
 
   const solutionCodeMutation = useMutation({
     mutationFn: solutionMutation,
     onSuccess: (data) => {
-      // queryClient.invalidateQueries({
-      //   queryKey: [
-      //     "problemSubmissions",
-      //     authState.groupId,
-      //     authState.userId,
-      //     codeState.problemId,
-      //   ],
-      // });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "problemSubmissions",
+          authState.groupId,
+          authState.userId,
+          codeState.problemId,
+        ],
+      });
 
       if (data.processing === true) {
         setTimeout(() => {
@@ -136,6 +136,21 @@ const CodeEditorFooter = () => {
       }
     },
   });
+
+  const [solutionCode, setSolutionCode] = useState<SolutionType>({
+    status: "Pending",
+    runtime: null,
+    memory: null,
+    language: codeState.lang,
+    code: codeState.codeStr,
+    processing: true,
+  });
+
+  useEffect(() => {
+    if (solutionCodeMutation.isSuccess) {
+      setSolutionCode(solutionCodeMutation.data);
+    }
+  }, [solutionCodeMutation.data, solutionCodeMutation.isSuccess]);
 
   const handleCodeSubmit = async () => {
     const newCodeState = {
@@ -164,36 +179,15 @@ const CodeEditorFooter = () => {
         <input type="button" />
         <div className="">
           <div className="flex items-center space-x-4">
-            <Button>Custom Input</Button>
-            <div className="">
-              {/* <Button className="mr-8">Run On Custom Input</Button> */}
               <Button onClick={handleCodeSubmit}>Submit</Button>
-            </div>
           </div>
         </div>
-
-        {/* <Button onClick={() => setIsOpen(true)}>Show Code</Button> */}
 
         <DialogComponent
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           title="Code Submission"
-          content={
-            <CodeSubmitDialog
-              data={
-                solutionCodeMutation.isSuccess
-                  ? solutionCodeMutation.data
-                  : {
-                      status: "Loading",
-                      runtime: null,
-                      memory: null,
-                      language: codeState.lang,
-                      code: codeState.codeStr,
-                      processing: true,
-                    }
-              }
-            />
-          }
+          content={<CodeSubmitDialog data={solutionCode} />}
         />
       </div>
     </>

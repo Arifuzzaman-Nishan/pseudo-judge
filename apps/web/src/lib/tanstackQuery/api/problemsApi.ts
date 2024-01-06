@@ -23,6 +23,7 @@ export type ProblemDetailsType = {
   sampleInput: string;
   sampleOutput: string;
   notes: string;
+  pdfUrl: string;
 };
 
 export type ProblemWithDetailsType = {
@@ -57,6 +58,10 @@ type ProblemSubmissionsArgsType = {
   problemId: string;
   groupId: string;
 };
+
+type ProblemSubmissionArgsType = {
+  runId: number;
+} & ProblemSubmissionsArgsType;
 
 export type ProblemSubmissionReturnType = {
   _id: string;

@@ -25,7 +25,7 @@ const CodeEditor = () => {
         <CodeEditorHeader />
         <CodeMirror
           value={state.codeStr}
-          // minHeight="60vh"
+          minHeight="60vh"
           maxHeight="60vh"
           onChange={onChange}
           spellCheck={false}

@@ -1,7 +1,7 @@
 export enum OJName {
   TIMUS = "timus",
   CODEFORCES = "codeforces",
-  UVA = "uva",
+  UVA = "UVA",
   SPOJ = "spoj",
   LOJ = "LightOJ",
 }

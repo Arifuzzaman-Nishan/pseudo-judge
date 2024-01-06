@@ -6,18 +6,18 @@ import { Group } from '@/group/group.schema';
 
 export type ProblemSubmissionDocument = HydratedDocument<ProblemSubmission>;
 
-enum Status {
-  PENDING = 'pending',
-  SUBMITTED = 'submitted',
-  LOADING = 'loading',
-  WRONG_ANSWER = 'Wrong Answer',
-  ACCEPTED = 'Accepted',
-  COMPILATION_ERROR = 'Compilation Error',
-  RUNTIME_ERROR = 'Runtime Error',
-  TIME_LIMIT = 'Time Limit',
-  MEMORY_LIMIT = 'Memory Limit',
-  PRESENTATION_ERROR = 'Presentation Error',
-}
+// enum Status {
+//   PENDING = 'pending',
+//   SUBMITTED = 'submitted',
+//   LOADING = 'loading',
+//   WRONG_ANSWER = 'Wrong Answer',
+//   ACCEPTED = 'Accepted',
+//   COMPILATION_ERROR = 'Compilation Error',
+//   RUNTIME_ERROR = 'Runtime Error',
+//   TIME_LIMIT = 'Time Limit',
+//   MEMORY_LIMIT = 'Memory Limit',
+//   PRESENTATION_ERROR = 'Presentation Error',
+// }
 
 @Schema({
   timestamps: true,
@@ -25,10 +25,8 @@ enum Status {
 export class ProblemSubmission {
   @Prop({
     required: true,
-    default: Status.PENDING,
-    enum: Status,
   })
-  status: Status;
+  status: string;
 
   @Prop({
     default: true,

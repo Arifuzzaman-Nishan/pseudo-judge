@@ -26,11 +26,14 @@ export class ProblemDetail {
   @Prop({ required: true })
   timeLimit: string;
 
-  @Prop({ required: true })
+  @Prop({ default: null })
   memoryLimit: string;
 
-  @Prop({ required: true })
+  @Prop({ default: null })
   problemDescriptionHTML: string;
+
+  @Prop({ default: null })
+  pdfUrl: string;
 
   // @Prop({
   //   required: true,
@@ -39,22 +42,22 @@ export class ProblemDetail {
   // problemDescription: Description[];
 
   @Prop({
-    required: true,
+    default: null,
   })
   inputDescription: string;
 
   @Prop({
-    required: true,
+    default: null,
   })
   outputDescription: string;
 
   @Prop({
-    required: true,
+    default: null,
   })
   sampleInput: string;
 
   @Prop({
-    required: true,
+    default: null,
   })
   sampleOutput: string;
 

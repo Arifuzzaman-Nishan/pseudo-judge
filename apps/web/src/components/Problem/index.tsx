@@ -25,9 +25,38 @@ import TableComponent from "../Shared/TableComponent";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import DialogComponent from "../Shared/DialogComponent";
+import { OJName } from "@/types";
 
 type ProblemStatementProps = {
   pblmDetails: ProblemDetailsType;
+};
+interface IPdfViewerProps {
+  url: string;
+}
+
+const PdfViewer: React.FC<IPdfViewerProps> = ({ url }) => {
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      <iframe
+        src={url}
+        title="PDF Viewer"
+        width="100%"
+        height="2048px"
+        style={{
+          height: "1511px",
+          border: "none",
+        }}
+        frameBorder="0"
+        scrolling="no"
+        allowFullScreen
+      />
+    </div>
+  );
 };
 
 const ProblemStatement: FC<ProblemStatementProps> = ({ pblmDetails }) => {
@@ -152,7 +181,10 @@ const ProblemSubmissions = () => {
 type ProblemTabProps = {
   pblmDetails: ProblemDetailsType;
 };
+
 const ProblemTab: FC<ProblemTabProps> = ({ pblmDetails }) => {
+  const codeState = useSelector(selectCode);
+
   return (
     <>
       <Tabs defaultValue="statement">
@@ -161,7 +193,11 @@ const ProblemTab: FC<ProblemTabProps> = ({ pblmDetails }) => {
           <TabsTrigger value="submission">Submission</TabsTrigger>
         </TabsList>
         <TabsContent value="statement">
-          <ProblemStatement pblmDetails={pblmDetails as ProblemDetailsType} />
+          {codeState.ojName === OJName.UVA ? (
+            <PdfViewer url={pblmDetails.pdfUrl} />
+          ) : (
+            <ProblemStatement pblmDetails={pblmDetails as ProblemDetailsType} />
+          )}
         </TabsContent>
         <TabsContent value="submission">
           <ProblemSubmissions />
