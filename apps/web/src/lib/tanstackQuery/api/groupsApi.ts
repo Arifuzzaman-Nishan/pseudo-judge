@@ -168,10 +168,20 @@ const groupsApi = {
 
     return response.data;
   },
+
+  deleteGroupMutation: async (groupId: string) => {
+    const response = await baseApi({
+      url: `/group/delete/${groupId}`,
+      method: "DELETE",
+    });
+
+    return response.data;
+  },
 };
 
 export const {
   createGroupMutation,
+  deleteGroupMutation,
   getGroupsQuery,
   getGroupAddedProblemsQuery,
   getGroupNotAddedProblemsQuery,

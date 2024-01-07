@@ -28,6 +28,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addProblemMutation } from "@/lib/tanstackQuery/api/problemsApi";
 
 import { toast } from "sonner";
+import { AxiosError } from "axios";
+import errorFn from "@/components/Shared/Error";
 
 const ProblemsTabForm = () => {
   const form = useForm<z.infer<typeof ProblemFormSchema>>({
@@ -48,12 +50,14 @@ const ProblemsTabForm = () => {
   });
 
   function onSubmit(data: z.infer<typeof ProblemFormSchema>) {
-    console.log("problem form data", data);
     toast.promise(mutation.mutateAsync(data), {
       loading: "Loading...",
       success: "Problem added successfully",
-      error: "Error adding problem",
+      error: (err: AxiosError) => {
+        return errorFn(err);
+      },
     });
+    form.reset();
   }
 
   return (

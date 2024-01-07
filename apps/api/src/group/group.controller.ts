@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseBoolPipe,
@@ -23,14 +24,14 @@ export class GroupController {
     return this.groupService.findAllGroups(enrollmentKey);
   }
 
-  // @Get('findall/:userId')
-  // findAllGroupsByUserId(@Param('userId') userId: string) {
-  //   return this.groupService.findAllGroupsByUserId(userId);
-  // }
-
   @Get('findone/:id')
   findOne(@Param('id') id: string) {
     return this.groupService.findGroupById(id);
+  }
+
+  @Delete('delete/:groupId')
+  delete(@Param('groupId') groupId: string) {
+    return this.groupService.deleteGroup(groupId);
   }
 
   @Get('findGroupAddedProblems/:groupId')

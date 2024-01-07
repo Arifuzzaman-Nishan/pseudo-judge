@@ -92,6 +92,13 @@ const problemsApi = {
     });
     return response.data;
   },
+  deleteProblemMutation: async (problemId: string) => {
+    const response = await baseApi({
+      url: `/problem/delete/${problemId}`,
+      method: "DELETE",
+    });
+    return response.data;
+  },
 
   addProblemMutation: async (data: AddProblemMutationType) => {
     const response = await baseApi({
@@ -135,4 +142,5 @@ export const {
   solutionMutation,
   addProblemMutation,
   getProblemSubmissionsQuery,
+  deleteProblemMutation,
 } = problemsApi;

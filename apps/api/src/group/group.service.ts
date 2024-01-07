@@ -61,6 +61,12 @@ export class GroupService {
     return group;
   }
 
+  async deleteGroup(groupId: string) {
+    return this.groupRepository.deleteOne({
+      _id: groupId,
+    });
+  }
+
   // problem operations
   async problemsAddedIntoGroup(dto: any) {
     const { problemIds, groupId } = dto;

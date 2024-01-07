@@ -51,7 +51,7 @@ export class ProblemService {
 
     const { url, ojName } = dto;
     await this.puppeteerService.launch({
-      headless: false,
+      headless: 'new',
     });
 
     await this.puppeteerService.goto(url);
@@ -155,6 +155,52 @@ export class ProblemService {
     ]);
 
     return problemDetails;
+  }
+
+  async deleteRelatedProblem(problemId: string, problemDetailsId: string) {
+    await this.problemDetailsRepository.deleteOne({
+      _id: problemDetailsId,
+    });
+
+    await this.groupRepository.updateMany(
+      {
+        problems: {
+          $in: [problemId],
+        },
+      },
+      {
+        $pull: {
+          problems: problemId,
+        },
+      },
+    );
+
+    await this.problemSubmissionRepository.deleteOne({
+      problem: problemId,
+    });
+  }
+
+  async deleteProblem(problemId: string) {
+    const problem = await this.problemRepository.findOne({
+      _id: problemId,
+    });
+
+    if (!problem) {
+      throw new HttpException('Problem not found', HttpStatus.NOT_FOUND);
+    }
+
+    await this.problemRepository.deleteOne({
+      _id: problemId,
+    });
+
+    await this.deleteRelatedProblem(
+      problemId,
+      problem.problemDetails as unknown as string,
+    );
+
+    return {
+      message: 'Problem deleted successfully',
+    };
   }
 
   async findGroupProblems(groupId: string) {

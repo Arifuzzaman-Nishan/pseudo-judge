@@ -15,31 +15,31 @@ export const formFields = [
     type: "select",
     placeholder: "Select the OJ name",
     options: [
-      {
-        key: 1,
-        label: "Timus OJ",
-        value: OJName.TIMUS,
-      },
-      {
-        key: 2,
-        label: "Codeforces",
-        value: OJName.CODEFORCES,
-      },
+      // {
+      //   key: 1,
+      //   label: "Timus OJ",
+      //   value: OJName.TIMUS,
+      // },
+      // {
+      //   key: 2,
+      //   label: "Codeforces",
+      //   value: OJName.CODEFORCES,
+      // },
       {
         key: 3,
-        label: "UVA",
-        value: OJName.UVA,
-      },
-      {
-        key: 4,
-        label: "SPOJ",
-        value: OJName.SPOJ,
-      },
-      {
-        key: 5,
         label: "LightOJ",
         value: OJName.LOJ,
       },
+      {
+        key: 4,
+        label: "UVA",
+        value: OJName.UVA,
+      },
+      // {
+      //   key: 5,
+      //   label: "SPOJ",
+      //   value: OJName.SPOJ,
+      // },
     ],
   },
   {

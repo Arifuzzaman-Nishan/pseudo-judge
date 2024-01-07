@@ -10,6 +10,7 @@ import TableDropdown from "./TableDropdown";
 import { ColumnDef } from "@tanstack/react-table";
 import TableComponent from "@/components/Shared/TableComponent";
 import { Button } from "@/components/ui/button";
+import Clipboard from "@/components/Problem/Clipboard";
 
 const columns: ColumnDef<GetGroupsType>[] = [
   {
@@ -27,11 +28,19 @@ const columns: ColumnDef<GetGroupsType>[] = [
   {
     accessorKey: "enrollmentKey",
     header: "Enrollment Key",
-    cell: ({ row }) => <div>{row.getValue("enrollmentKey")}</div>,
+    cell: ({ row }) => (
+      <div className="flex items-center gap-x-3">
+        <div>{row.getValue("enrollmentKey")}</div>
+        <Clipboard className="static" text={row.getValue("enrollmentKey")} />
+      </div>
+    ),
   },
   {
     accessorKey: "totalMembers",
     header: "Total Members",
+    cell: ({ row }) => (
+      <div className="text-center w-24">{row.getValue("totalMembers")}</div>
+    ),
   },
   {
     accessorKey: "action",
@@ -52,21 +61,18 @@ const GroupsTabTable = ({
 }: {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { isLoading, isError, data, isSuccess } = useQuery({
+  const { isLoading, data, isSuccess } = useQuery({
     queryKey: ["groups"],
     queryFn: () => getGroupsQuery(),
   });
 
-  let content = null;
-  if (isLoading) {
-  } else if (!isLoading && isError) {
-  } else if (!isLoading && !isError && data?.length === 0) {
-  } else if (!isLoading && !isError && data && data?.length > 0) {
-  }
-
   return (
     <div>
-      <TableComponent columns={columns} data={isSuccess ? data : []}>
+      <TableComponent
+        isLoading={isLoading}
+        columns={columns}
+        data={isSuccess ? data : []}
+      >
         <div className="ml-auto">
           <Button onClick={() => setIsOpen(true)}>Add Group</Button>
         </div>

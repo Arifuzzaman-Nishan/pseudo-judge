@@ -17,17 +17,15 @@ import { GroupFormFieldTypes, GroupFormSchema } from "./schema";
 import { groupFromField } from "./data";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createGroupMutation } from "@/lib/tanstackQuery/api/groupsApi";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
+import errorFn from "@/components/Shared/Error";
 
 const GroupsTabForm = () => {
-  const { toast } = useToast();
-
-  // const queryClient = getQueryClient();
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: createGroupMutation,
-    onSuccess: (data) => {
-      console.log("group created successfully", data);
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["groups"],
       });
@@ -38,26 +36,18 @@ const GroupsTabForm = () => {
     resolver: zodResolver(GroupFormSchema),
     defaultValues: {
       groupName: "",
-      // enrollmentKeyExpiration: "",
     },
   });
 
   const onSubmit = async (data: z.infer<typeof GroupFormSchema>) => {
-    console.log("group data is ", data);
-    try {
-      await mutation.mutateAsync(data);
-      console.log("group created successfully");
-      toast({
-        title: "Group Created",
-        description: "Group has been created successfully",
-      });
-    } catch (err: any) {
-      // console.log("error is ", mutation.error);
-      toast({
-        title: "Group Creation Failed",
-        description: "Group creation failed, please try again",
-      });
-    }
+    toast.promise(mutation.mutateAsync(data), {
+      loading: "Creating Group...",
+      success: "Successfully Created Group",
+      error: (err: AxiosError) => {
+        return errorFn(err);
+      },
+    });
+    form.reset();
   };
 
   return (
@@ -73,7 +63,7 @@ const GroupsTabForm = () => {
             name={formField.name as GroupFormFieldTypes}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{formField.name}</FormLabel>
+                <FormLabel>{formField.label}</FormLabel>
                 <FormControl>
                   <Input
                     required
@@ -86,7 +76,9 @@ const GroupsTabForm = () => {
             )}
           />
         ))}
-        <Button type="submit">Submit</Button>
+        <Button disabled={mutation.isPending} type="submit">
+          Submit
+        </Button>
       </form>
     </Form>
   );

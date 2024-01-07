@@ -62,6 +62,14 @@ export abstract class BaseAbstractRepository<T extends Document>
       .exec();
   }
 
+  async updateMany(
+    filterQuery: FilterQuery<T>,
+    updatedData: UpdateQuery<unknown>,
+    options?: QueryOptions<T>,
+  ) {
+    return this.model.updateMany(filterQuery, updatedData, options);
+  }
+
   async deleteOne(
     filterQuery: FilterQuery<T>,
     session?: ClientSession,

@@ -9,7 +9,7 @@ import ProblemsTab from "./ProblemsTab";
 const Settings = () => {
   return (
     <Container>
-      <div className="">
+      <div>
         <Tabs defaultValue="groups">
           <TabsList className="grid grid-cols-2 w-[400px] mx-auto">
             <TabsTrigger value="groups">Groups</TabsTrigger>

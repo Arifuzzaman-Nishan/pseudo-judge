@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ProblemService } from './problem.service';
 import { DifficultyRating } from './schemas/problem.schema';
 
@@ -25,6 +33,11 @@ export class ProblemController {
   @Get('findoneWithDetails/:problemId')
   async findOne(@Param('problemId') problemId: string) {
     return this.problemService.findOne(problemId);
+  }
+
+  @Delete('delete/:problemId')
+  async deleteProblem(@Param('problemId') problemId: string) {
+    return this.problemService.deleteProblem(problemId);
   }
 
   @Get('findGroupProblems/:groupId')
