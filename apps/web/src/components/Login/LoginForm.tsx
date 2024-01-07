@@ -17,7 +17,9 @@ import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
 import { loginMutation } from "@/lib/tanstackQuery/api/authApi";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
+import errorFn from "../Shared/Error";
+import { useRouter } from "next-nprogress-bar";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -44,17 +46,16 @@ const LoginForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
     toast.promise(mutation.mutateAsync(values), {
       loading: "Logging in...",
       success: () => {
         router.push("/problems");
         return "Logged in successfully";
       },
-      error: "Failed to login",
+      error: (err: AxiosError) => {
+        return errorFn(err);
+      },
     });
-
-    // router.push("/problems");
   };
 
   return (
@@ -97,7 +98,9 @@ const LoginForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit">Login</Button>
+          <Button disabled={mutation.isPending} type="submit">
+            Login
+          </Button>
         </form>
       </Form>
     </>

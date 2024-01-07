@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, ReactNode, useEffect, useState } from "react";
+import React, { FC, ReactNode, useEffect, useMemo, useState } from "react";
 import {
   Table,
   TableBody,
@@ -21,12 +21,18 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import Lottie from "../Lottie";
+import LoadingComponent from "../Loading";
+
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface TableComponentProps<T> {
   columns: ColumnDef<T>[];
   data: T[];
   onSelectedRowIdsChange?: (selectedRowData: Array<string>) => void;
   children?: ReactNode;
+  isLoading?: boolean;
+  isSelectable?: boolean;
 }
 
 const TableComponent = <T extends { _id?: string }>({
@@ -34,13 +40,31 @@ const TableComponent = <T extends { _id?: string }>({
   data,
   onSelectedRowIdsChange,
   children,
+  isLoading,
+  isSelectable,
 }: TableComponentProps<T>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
 
+  const tableData = React.useMemo(
+    () => (isLoading ? Array(30).fill({}) : data),
+    [isLoading, data]
+  );
+
+  const columnsMemo = useMemo(
+    () =>
+      isLoading
+        ? columns.map((column) => ({
+            ...column,
+            cell: () => <Skeleton className="h-4 w-[250px]" />,
+          }))
+        : columns,
+    [isLoading, columns]
+  );
+
   const table = useReactTable({
-    data,
-    columns,
+    data: tableData,
+    columns: columnsMemo,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -66,19 +90,38 @@ const TableComponent = <T extends { _id?: string }>({
     }
   }, [table, rowSelection, onSelectedRowIdsChange]);
 
+  const tabledata = table.getRowModel().rows?.length;
+
+  // if (!isLoading && isError) return <div>Error...</div>;
+  let content = null;
+  if (!isLoading && !tabledata) {
+    content = (
+      <TableRow>
+        <TableCell colSpan={columns.length} className="text-center h-24">
+          <Lottie
+            className="max-w-lg mx-auto"
+            src="/assets/lottiefiles/data-not-found.lottie"
+          />
+        </TableCell>
+      </TableRow>
+    );
+  } else {
+    if (data) {
+      content = table.getRowModel().rows.map((row) => (
+        <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+          {row.getVisibleCells().map((cell) => (
+            <TableCell key={cell.id}>
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </TableCell>
+          ))}
+        </TableRow>
+      ));
+    }
+  }
+
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        {/* <Input
-          placeholder="Filter title..."
-          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("title")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        /> */}
-        {children}
-      </div>
+      <div className="flex items-center py-4">{children}</div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -99,41 +142,16 @@ const TableComponent = <T extends { _id?: string }>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
+          <TableBody>{content}</TableBody>
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
+        {isSelectable && (
+          <div className="flex-1 text-sm text-muted-foreground">
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+        )}
         <div className="space-x-2">
           <Button
             variant="outline"

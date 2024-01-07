@@ -199,7 +199,7 @@ export class ProblemService {
     console.log('login is done');
     const codeSubmitRes = await this.vjudgeService.submitCode(dto);
 
-    // console.log('codeSubmitRes is ', codeSubmitRes.runId);
+    console.log('codeSubmitRes is ', codeSubmitRes.runId);
 
     await this.problemSubmissionRepository.create({
       status: 'Pending',

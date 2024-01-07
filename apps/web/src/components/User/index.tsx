@@ -102,6 +102,7 @@ const columns: ColumnDef<UserTableType>[] = [
 ];
 
 const UserTable = ({ data }: { data: UserTableType[] }) => {
+  console.log("data is ", data.length);
   return <TableComponent columns={columns} data={data} />;
 };
 
@@ -140,6 +141,7 @@ const User = ({ username }: { username: string }) => {
   let userStatisticsTable = null;
 
   if (isSuccess) {
+    console.log("data totalSubmission is ", data.totalSubmissions);
     userProfile = (
       <>
         <div className="border flex justify-center rounded-sm">

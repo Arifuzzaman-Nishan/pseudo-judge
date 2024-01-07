@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect } from "react";
 import pseudoJudgeLogo from "../../../../public/assets/images/logo1.png";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import headerData from "../../../../public/assets/data/headerdata";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -26,6 +26,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
+import { AxiosError } from "axios";
+import errorFn from "../Error";
+import { useRouter } from "next-nprogress-bar";
 
 const HeaderUser = ({ data }: any) => {
   const dispatch = useDispatch();
@@ -42,7 +45,9 @@ const HeaderUser = ({ data }: any) => {
         router.push("/login");
         return "Logout successfully";
       },
-      error: "Failed to logout",
+      error: (err: AxiosError) => {
+        return errorFn(err);
+      },
     });
   };
 

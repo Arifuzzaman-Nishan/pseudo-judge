@@ -41,6 +41,7 @@ export class VjudgeService {
     ojProblemId: string;
     codeStr: string;
   }) {
+    console.log('from submitCode...');
     // console.log('ojName is ', ojName);
     // console.log('ojProblemId', ojProblemId);
     const submitFormData = new FormData();
@@ -68,6 +69,7 @@ export class VjudgeService {
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         },
       });
+      console.log('submitCode result is ', res.data);
       return res.data;
     } catch (err: any) {
       console.log('submitCode error', err);

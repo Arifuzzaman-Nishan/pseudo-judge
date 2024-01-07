@@ -123,33 +123,78 @@ export class UserService {
           'submissions.createdAt': -1,
         },
       },
+
+      // Grouping for unique count and all submissions
       {
         $group: {
           _id: '$_id',
           userDoc: { $first: '$$ROOT' },
           totalAttempts: { $sum: { $cond: ['$submissions', 1, 0] } },
-          totalAccepted: {
-            $sum: {
-              $cond: [{ $eq: ['$submissions.status', 'Accepted'] }, 1, 0],
+          submissions: { $push: '$submissions' },
+          uniqueAccepted: {
+            $addToSet: {
+              $cond: [
+                {
+                  $and: [
+                    { $eq: ['$submissions.status', 'Accepted'] },
+                    '$submissions.problem',
+                  ],
+                },
+                '$submissions.problem',
+                null,
+              ],
             },
           },
           last7daysAccepted: {
-            $sum: {
+            $addToSet: {
               $cond: [
                 {
                   $and: [
                     { $eq: ['$submissions.status', 'Accepted'] },
                     { $gte: ['$submissions.createdAt', sevenDaysAgo] },
+                    '$submissions.problem',
                   ],
                 },
-                1,
-                0,
+                '$submissions.problem',
+                null,
               ],
             },
           },
-          submissions: { $push: '$submissions' },
         },
       },
+
+      // Count unique accepted and last 7 days accepted problems
+      {
+        $addFields: {
+          totalAccepted: {
+            $size: {
+              $filter: {
+                input: '$uniqueAccepted',
+                as: 'item',
+                cond: { $ne: ['$$item', null] },
+              },
+            },
+          },
+          totalLast7daysAccepted: {
+            $size: {
+              $filter: {
+                input: '$last7daysAccepted',
+                as: 'item',
+                cond: { $ne: ['$$item', null] },
+              },
+            },
+          },
+          acceptedSubmissions: {
+            $filter: {
+              input: '$submissions',
+              as: 'submission',
+              cond: { $eq: ['$$submission.status', 'Accepted'] },
+            },
+          },
+        },
+      },
+
+      // Lookup for group data
       {
         $lookup: {
           from: 'groups',
@@ -158,6 +203,8 @@ export class UserService {
           as: 'groupData',
         },
       },
+
+      // Final projection
       {
         $project: {
           _id: 1,
@@ -171,16 +218,10 @@ export class UserService {
           submissionCount: {
             totalAttempts: '$totalAttempts',
             totalAccepted: '$totalAccepted',
-            last7daysAccepted: '$last7daysAccepted',
+            last7daysAccepted: '$totalLast7daysAccepted',
           },
           totalSubmissions: '$submissions',
-          acceptedSubmissions: {
-            $filter: {
-              input: '$submissions',
-              as: 'submission',
-              cond: { $eq: ['$$submission.status', 'Accepted'] },
-            },
-          },
+          acceptedSubmissions: 1,
           groupData: { $ifNull: ['$groupData', []] },
         },
       },

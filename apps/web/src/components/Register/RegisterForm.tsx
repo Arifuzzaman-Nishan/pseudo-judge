@@ -16,7 +16,9 @@ import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
 import { registerMuation } from "@/lib/tanstackQuery/api/authApi";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
+import { useRouter } from "next-nprogress-bar";
+import errorFn from "../Shared/Error";
 
 type FormFieldType =
   | "password"
@@ -116,10 +118,12 @@ const RegisterForm = () => {
         router.push("/problems");
         return "Registered successfully";
       },
-      error: "Something went wrong",
+      error: (err: AxiosError) => {
+        return errorFn(err);
+      },
     });
 
-    // form.reset();
+    form.reset();
   };
 
   return (
@@ -147,7 +151,9 @@ const RegisterForm = () => {
               )}
             />
           ))}
-          <Button type="submit">Register</Button>
+          <Button disabled={mutation.isPending} type="submit">
+            Register
+          </Button>
         </form>
       </Form>
     </>

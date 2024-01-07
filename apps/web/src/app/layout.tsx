@@ -28,7 +28,14 @@ export default function RootLayout({
           <TanstackProvider>
             <Layout>
               {children}
-              <Toaster />
+              <Toaster
+                richColors
+                closeButton
+                toastOptions={{
+                  className: "class",
+                }}
+                duration={3000}
+              />
             </Layout>
           </TanstackProvider>
         </ReduxProvider>
