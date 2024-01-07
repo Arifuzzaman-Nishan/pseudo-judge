@@ -49,5 +49,21 @@ export class UserService {
     };
   }
 
-  async loginUser() {}
+  async findOneByUsername(username: string) {
+    const user = await this.userRepository.findOne(
+      {
+        username,
+      },
+      {
+        password: 0,
+        __v: 0,
+      },
+    );
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
+  }
 }
