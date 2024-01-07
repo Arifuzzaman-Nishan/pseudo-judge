@@ -47,5 +47,6 @@ import { GroupModule } from '@/group/group.module';
     ProblemDetailsRepository,
     ProblemSubmissionRepository,
   ],
+  exports: [ProblemSubmissionRepository],
 })
 export class ProblemsModule {}

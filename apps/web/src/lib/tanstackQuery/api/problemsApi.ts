@@ -72,6 +72,7 @@ export type ProblemSubmissionReturnType = {
   memory: number;
   createdAt: string;
   title: string;
+  ojName?: string;
 };
 
 const problemsApi = {

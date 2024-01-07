@@ -1,0 +1,49 @@
+{
+  "_id": "659167656f308c8883775a55",
+  "fullName": "Tareq Aziz Uday",
+  "imageUrl": "https://s.gravatar.com/avatar/6583924a206e409d80024e5dd518b511?s=70",
+  "username": "uday",
+  "email": "uday@gmail.com",
+  "role": "user",
+  "createdAt": "2023-12-31T13:06:45.740Z",
+  "updatedAt": "2023-12-31T13:06:45.740Z",
+  "submisionCount": {
+    "totalAttempts": 15,
+    "totalAccepted": 1,
+    "last7daysAccepted": 1
+  },
+  "totalSubmissions": [
+    {
+      "_id": "6594427d3c842f96806a9e93",
+      "status": "Wrong Answer",
+      "processing": false,
+      "runtime": 4,
+      "language": "cpp",
+      "runId": 48053856,
+      "code": "// e5f1277a-d6ce-453c-bca8-5cc18bd7e407\n#include<bits/stdc++.h>\nusing namespace std;\n \nint main() {\n \n  cout << \"hello Nishan\" << endl;\n \n    return 0;\n}",
+      "memory": 716,
+      "createdAt": "2024-01-02T17:06:05.978Z",
+      "updatedAt": "2024-01-02T17:06:14.245Z",
+      "__v": 0
+    }
+  ],
+  "acceptedSubmissions": [
+    {
+      "_id": "6594427d3c842f96806a9e93",
+      "status": "Accepted",
+      "processing": false,
+      "runtime": 4,
+      "language": "cpp",
+      "runId": 48053856,
+      "code": "// e5f1277a-d6ce-453c-bca8-5cc18bd7e407\n#include<bits/stdc++.h>\nusing namespace std;\n \nint main() {\n \n  cout << \"hello Nishan\" << endl;\n \n    return 0;\n}",
+      "memory": 716,
+      "createdAt": "2024-01-02T17:06:05.978Z",
+      "updatedAt": "2024-01-02T17:06:14.245Z",
+      "__v": 0
+    }
+  ],
+  "group": {
+    "userIsInGroup": true,
+    "groupName": "blue-5"
+  }
+}
