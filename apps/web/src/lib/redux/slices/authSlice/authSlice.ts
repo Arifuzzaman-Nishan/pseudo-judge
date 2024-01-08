@@ -1,6 +1,4 @@
-import { CodeLang } from "@/components/CodeEditor/CodeEditorHeader/CodeLangSelect";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { log } from "console";
 
 export type AuthSliceState = {
   userId: string;

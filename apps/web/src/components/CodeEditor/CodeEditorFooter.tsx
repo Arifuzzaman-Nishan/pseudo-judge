@@ -173,18 +173,19 @@ const CodeEditorFooter = () => {
         groupId: authState.groupId,
       };
 
-      toast.loading("Submitting code...");
+      const toastId = toast.loading("Submitting code...");
       let submitCode = null;
       try {
         submitCode = await submitCodeMutation.mutateAsync(newCodeState);
+        toast.dismiss(toastId);
         toast.success("Code submitted successfully");
       } catch (err) {
+        toast.dismiss(toastId);
         toast.error(errorFn(err as AxiosError));
       }
 
-      setIsOpen(true);
-
       if (submitCode) {
+        setIsOpen(true);
         setRunId(submitCode.runId);
         solutionCodeMutation.mutate(submitCode.runId);
       }
@@ -193,13 +194,9 @@ const CodeEditorFooter = () => {
 
   return (
     <>
-      <div className="mt-5">
-        {/* <TextareaComponent /> */}
-        <input type="button" />
-        <div className="">
-          <div className="flex items-center space-x-4">
-            <Button onClick={handleCodeSubmit}>Submit</Button>
-          </div>
+      <div>
+        <div className="mt-3">
+          <Button onClick={handleCodeSubmit}>Submit your code</Button>
         </div>
 
         <AlertDialogComponent

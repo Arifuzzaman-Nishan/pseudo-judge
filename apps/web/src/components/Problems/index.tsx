@@ -8,7 +8,6 @@ import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 
 import Container from "@/components/Shared/Container";
-import { getAllGroupProblemsByUserIdQuery } from "@/lib/tanstackQuery/api/groupsApi";
 import { ColumnDef } from "@tanstack/react-table";
 import TableComponent from "../Shared/TableComponent";
 import { Button } from "../ui/button";

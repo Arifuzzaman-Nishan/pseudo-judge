@@ -7,7 +7,7 @@ import pseudoJudgeLogo from "../../../../public/assets/images/logo1.png";
 import { usePathname } from "next/navigation";
 import headerData from "../../../../public/assets/data/headerdata";
 import { Button } from "@/components/ui/button";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isLoginQuery, logoutMutation } from "@/lib/tanstackQuery/api/authApi";
 import { useDispatch } from "@/lib/redux";
 import { authSlice, selectAuth } from "@/lib/redux/slices/authSlice";
@@ -102,12 +102,26 @@ const Header = () => {
 
   const pathname = usePathname();
 
-  const { data, isSuccess } = useQuery({
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    queryClient.invalidateQueries({
+      queryKey: ["isLogin", pathname],
+    });
+  }, [pathname, queryClient]);
+
+  const { data, isSuccess, isError } = useQuery({
     queryKey: ["isLogin", pathname],
     queryFn: isLoginQuery,
     retry: false,
     refetchOnMount: true,
   });
+
+  useEffect(() => {
+    if (isError) {
+      dispatch(authSlice.actions.logoutAuthData());
+    }
+  }, [isError, dispatch]);
 
   let content = (
     <Link href="/login">
