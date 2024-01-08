@@ -69,10 +69,10 @@ export class VjudgeService {
             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         },
       });
-      console.log('submitCode result is ', res.data);
+
       return res.data;
     } catch (err: any) {
-      console.log('submitCode error', err);
+      console.log('submitCode error', err.message);
     }
   }
 
@@ -80,17 +80,21 @@ export class VjudgeService {
     // const processing = true;
     // let res: AxiosResponse<any, any>;
     // while (processing) {
-    const res = await axiosClient({
-      url: `https://vjudge.net/solution/data/${runId}`,
-      method: 'get',
-      withCredentials: true,
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      },
-    });
-    // processing = res.data.processing;
-    // }
-    return res.data;
+    try {
+      const res = await axiosClient({
+        url: `https://vjudge.net/solution/data/${runId}`,
+        method: 'get',
+        withCredentials: true,
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+      });
+      // processing = res.data.processing;
+      // }
+      return res.data;
+    } catch (err: any) {
+      console.log('solution error', err.message);
+    }
   }
 }

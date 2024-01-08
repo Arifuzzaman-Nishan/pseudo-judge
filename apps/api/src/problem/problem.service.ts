@@ -354,7 +354,12 @@ export class ProblemService {
     console.log('login is done');
     const codeSubmitRes = await this.vjudgeService.submitCode(dto);
 
-    console.log('codeSubmitRes is ', codeSubmitRes.runId);
+    if (!codeSubmitRes?.runId) {
+      throw new HttpException(
+        'Code submission failed',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
 
     await this.problemSubmissionRepository.create({
       status: 'Pending',
@@ -367,23 +372,16 @@ export class ProblemService {
     });
 
     return codeSubmitRes;
-
-    // console.log('codeSubmitRes is ', codeSubmitRes);
-    // const result = await this.vjudgeService.solution({
-    //   runId: codeSubmitRes.runId,
-    // });
-    // console.log('result is ', result);
-    // return result;
   }
 
   async solution(runId: string) {
-    console.log('runId is ', runId);
-
     const result = await this.vjudgeService.solution({
       runId: runId,
     });
 
-    console.log('code solution is ', result);
+    if (!result) {
+      throw new HttpException('Submission not found', HttpStatus.NOT_FOUND);
+    }
 
     return this.problemSubmissionRepository.findOneAndUpdate(
       {

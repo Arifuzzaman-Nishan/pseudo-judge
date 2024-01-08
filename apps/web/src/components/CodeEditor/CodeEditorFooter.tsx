@@ -24,6 +24,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { selectAuth } from "@/lib/redux/slices/authSlice";
+import AlertDialogComponent from "../Shared/AlertDialogComponent";
+import { AlertDialogAction } from "../ui/alert-dialog";
+import { useRouter } from "next-nprogress-bar";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
+import errorFn from "../Shared/Error";
 
 type CodeSubmitDialogType = {
   data: SolutionType;
@@ -152,23 +158,36 @@ const CodeEditorFooter = () => {
     }
   }, [solutionCodeMutation.data, solutionCodeMutation.isSuccess]);
 
+  const auth = useSelector(selectAuth);
+  const router = useRouter();
+
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+
   const handleCodeSubmit = async () => {
-    const newCodeState = {
-      ...codeState,
-      userId: authState.userId,
-      groupId: authState.groupId,
-    };
+    if (!auth.isLogin) {
+      setIsAlertOpen(true);
+    } else {
+      const newCodeState = {
+        ...codeState,
+        userId: authState.userId,
+        groupId: authState.groupId,
+      };
 
-    console.log("codeState is ", newCodeState);
-    const submitCode = await submitCodeMutation.mutateAsync(newCodeState);
+      toast.loading("Submitting code...");
+      let submitCode = null;
+      try {
+        submitCode = await submitCodeMutation.mutateAsync(newCodeState);
+        toast.success("Code submitted successfully");
+      } catch (err) {
+        toast.error(errorFn(err as AxiosError));
+      }
 
-    setIsOpen(true);
+      setIsOpen(true);
 
-    console.log("submitCode is ", submitCode);
-
-    if (submitCode) {
-      setRunId(submitCode.runId);
-      solutionCodeMutation.mutate(submitCode.runId);
+      if (submitCode) {
+        setRunId(submitCode.runId);
+        solutionCodeMutation.mutate(submitCode.runId);
+      }
     }
   };
 
@@ -179,9 +198,21 @@ const CodeEditorFooter = () => {
         <input type="button" />
         <div className="">
           <div className="flex items-center space-x-4">
-              <Button onClick={handleCodeSubmit}>Submit</Button>
+            <Button onClick={handleCodeSubmit}>Submit</Button>
           </div>
         </div>
+
+        <AlertDialogComponent
+          isOpen={isAlertOpen}
+          setIsOpen={setIsAlertOpen}
+          title="Login Required!"
+          description="You cannot submit code. please login first"
+          footerJSX={
+            <AlertDialogAction onClick={() => router.push("/login")}>
+              Login
+            </AlertDialogAction>
+          }
+        />
 
         <DialogComponent
           isOpen={isOpen}
