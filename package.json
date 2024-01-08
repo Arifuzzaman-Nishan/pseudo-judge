@@ -6,12 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "turbo run dev",
-    "ui:add": "pnpm --filter web ui:add"
+    "ui:add": "pnpm --filter web ui:add",
+    "build": "turbo run build",
+    "start:prod": "turbo run prod"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "turbo": "^1.11.3"
   }
 }

@@ -8,7 +8,7 @@
     "build": {
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
-    "start:prod": {
+    "prod": {
       "cache": false
     }
   }
