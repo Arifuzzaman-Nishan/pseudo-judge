@@ -130,6 +130,115 @@ export class ProblemService {
     return this.problemRepository.findAll({});
   }
 
+  async totalSolvedCount(problemId: string) {
+    const result = await this.problemSubmissionRepository.aggregate<any>([
+      {
+        $match: {
+          problem: new mongoose.Types.ObjectId(problemId),
+        },
+      },
+      {
+        $facet: {
+          totalSubmission: [
+            {
+              $count: 'count',
+            },
+          ],
+          totalSolved: [
+            {
+              $match: {
+                status: 'Accepted',
+              },
+            },
+            {
+              $group: {
+                _id: '$user',
+              },
+            },
+            {
+              $count: 'count',
+            },
+          ],
+        },
+      },
+    ]);
+
+    const totalSubmission = result[0].totalSubmission[0]?.count || 0;
+    const totalSolved = result[0].totalSolved[0]?.count || 0;
+
+    return { totalSubmission, totalSolved };
+  }
+
+  async findAllProblemsOrGroupProblems(userId: string) {
+    let groupsWithProblems = null;
+    if (userId) {
+      [groupsWithProblems] = await this.groupRepository.aggregate<{
+        problems: Array<{
+          _id: string;
+          totalSolved: number;
+          totalSubmission: number;
+        }>;
+      }>([
+        {
+          $match: {
+            users: { $in: [new mongoose.Types.ObjectId(userId)] },
+          },
+        },
+        {
+          $lookup: {
+            from: 'problems',
+            localField: 'problems',
+            foreignField: '_id',
+            as: 'groupProblems',
+          },
+        },
+        {
+          $unwind: {
+            path: '$groupProblems',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $project: {
+            'groupProblems.problemDetails': 0,
+            'groupProblems.__v': 0,
+          },
+        },
+        {
+          $group: {
+            _id: '$_id',
+            groupName: { $first: '$groupName' },
+            problems: { $push: '$groupProblems' },
+          },
+        },
+      ]);
+    } else {
+      // console.log('userId is ', userId);
+
+      const allProblems = await this.problemRepository.findAll({});
+      groupsWithProblems = {
+        _id: '',
+        groupName: '',
+        problems: allProblems,
+      };
+    }
+
+    if (!groupsWithProblems) {
+      return { problems: [], groupName: '', _id: '' };
+    }
+
+    for (const problem of groupsWithProblems.problems) {
+      console.log('problem id is ', problem._id);
+
+      const count = await this.totalSolvedCount(problem._id);
+      console.log('cont is ', count);
+      problem.totalSolved = count?.totalSolved || 0;
+      problem.totalSubmission = count?.totalSubmission || 0;
+    }
+
+    return groupsWithProblems;
+  }
+
   async findOne(problemId: string) {
     console.log('problemId is ', problemId);
 

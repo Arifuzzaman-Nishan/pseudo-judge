@@ -4,7 +4,7 @@ import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import React from "react";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import { getAllGroupProblemsByUserIdQuery } from "@/lib/tanstackQuery/api/groupsApi";
+import { getAllProblemsOrGroupProblems } from "@/lib/tanstackQuery/api/problemsApi";
 
 export default async function ProblemsPage() {
   const cookieStore = cookies();
@@ -19,7 +19,7 @@ export default async function ProblemsPage() {
   const queryClient = getQueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["group", "problems", userId],
-    queryFn: () => getAllGroupProblemsByUserIdQuery(userId),
+    queryFn: () => getAllProblemsOrGroupProblems(userId),
   });
 
   return (

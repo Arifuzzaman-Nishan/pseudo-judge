@@ -12,6 +12,7 @@ export type GetGroupsType = {
   groupName: string;
   enrollmentKey?: string;
   totalMembers: string;
+  totalProblems: string;
   createdAt: string;
 };
 

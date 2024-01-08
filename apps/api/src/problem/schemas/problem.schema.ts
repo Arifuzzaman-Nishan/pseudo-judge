@@ -45,7 +45,7 @@ export class Problem {
   @Prop({
     default: 0,
   })
-  solvedCount: number;
+  totalSolved: number;
 
   @Prop({
     default: 0,

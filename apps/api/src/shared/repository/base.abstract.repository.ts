@@ -88,7 +88,7 @@ export abstract class BaseAbstractRepository<T extends Document>
     return this.model.watch();
   }
 
-  aggregate(pipeline: PipelineStage[]): Promise<T[]> {
+  aggregate<T>(pipeline: PipelineStage[]): Promise<T[]> {
     return this.model.aggregate(pipeline).exec();
   }
 

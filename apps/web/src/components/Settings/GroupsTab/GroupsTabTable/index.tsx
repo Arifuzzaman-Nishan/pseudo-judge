@@ -43,6 +43,13 @@ const columns: ColumnDef<GetGroupsType>[] = [
     ),
   },
   {
+    accessorKey: "totalProblems",
+    header: "Total Problems",
+    cell: ({ row }) => (
+      <div className="text-center w-24">{row.getValue("totalProblems")}</div>
+    ),
+  },
+  {
     accessorKey: "action",
     header: "Action",
     cell: ({ row }) => (

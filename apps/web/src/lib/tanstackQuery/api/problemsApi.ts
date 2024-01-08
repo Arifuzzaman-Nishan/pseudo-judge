@@ -8,7 +8,7 @@ export type ProblemsType = {
   title: string;
   difficultyRating: string;
   ojName: string;
-  solvedCount: number;
+  totalSolved: number;
   totalSubmission: number;
   ojProblemId: string;
 };
@@ -75,10 +75,26 @@ export type ProblemSubmissionReturnType = {
   ojName?: string;
 };
 
+export type GetAllProblemsOrGroupProblemsReturnType = {
+  index?: number;
+  _id: string;
+  groupName: string;
+  problems: ProblemsType[];
+};
+
 const problemsApi = {
   getProblemsQuery: async (): Promise<Array<ProblemsType>> => {
     const response = await baseApi({
-      url: "/problem/findall",
+      url: `/problem/findall`,
+      method: "GET",
+    });
+    return response.data;
+  },
+  getAllProblemsOrGroupProblems: async (
+    userId?: string
+  ): Promise<GetAllProblemsOrGroupProblemsReturnType> => {
+    const response = await baseApi({
+      url: `/problem/findAllProblemsOrGroupProblems?userId=${userId}`,
       method: "GET",
     });
     return response.data;
@@ -137,6 +153,7 @@ const problemsApi = {
 
 export const {
   getProblemsQuery,
+  getAllProblemsOrGroupProblems,
   getProblemWithDetails,
   submitCode,
   solutionMutation,

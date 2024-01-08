@@ -22,12 +22,6 @@ export class Group {
   enrollmentKey: string;
 
   @Prop({
-    // required: true,
-    default: 0,
-  })
-  totalMembers: number;
-
-  @Prop({
     type: [
       {
         type: mongoose.Schema.Types.ObjectId,

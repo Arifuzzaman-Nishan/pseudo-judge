@@ -1,6 +1,9 @@
 "use client";
 
-import { ProblemsType } from "@/lib/tanstackQuery/api/problemsApi";
+import {
+  ProblemsType,
+  getAllProblemsOrGroupProblems,
+} from "@/lib/tanstackQuery/api/problemsApi";
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 
@@ -14,7 +17,7 @@ import Link from "next/link";
 const Problems = ({ userId }: { userId: string }) => {
   const { data, isLoading } = useQuery({
     queryKey: ["group", "problems", userId],
-    queryFn: () => getAllGroupProblemsByUserIdQuery(userId),
+    queryFn: () => getAllProblemsOrGroupProblems(userId),
     enabled: !!userId,
   });
 
@@ -41,19 +44,27 @@ const Problems = ({ userId }: { userId: string }) => {
       header: "Difficulty Rating",
     },
     {
-      accessorKey: "solvedCount",
-      header: "Solved Count",
+      accessorKey: "totalSolved",
+      header: "Total Solved",
+      cell: ({ row }) => (
+        <div className="text-center w-24">{row.getValue("totalSolved")}</div>
+      ),
     },
     {
       accessorKey: "totalSubmission",
       header: "Total Submission",
+      cell: ({ row }) => (
+        <div className="text-center w-24">
+          {row.getValue("totalSubmission")}
+        </div>
+      ),
     },
     {
       header: "Action",
       cell: ({ row }) => (
         <>
           <Link href={`/problem/${row.original._id}`}>
-            <Button variant="ghost">Solve</Button>
+            <Button variant="outline">Solve</Button>
           </Link>
         </>
       ),

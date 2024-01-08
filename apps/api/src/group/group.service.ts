@@ -26,22 +26,28 @@ export class GroupService {
     return result;
   }
 
-  findAllGroups(enrollmentKey: boolean) {
-    if (enrollmentKey) {
-      return this.groupRepository.findAll(
-        {},
-        {
-          __v: 0,
-          users: 0,
-          problems: 0,
+  async findAllGroups(enrollmentKey: boolean) {
+    return this.groupRepository.aggregate([
+      {
+        $addFields: {
+          totalMembers: {
+            $size: '$users',
+          },
         },
-      );
-    } else {
-      return this.groupRepository.findAll(
-        {},
-        { enrollmentKey: 0, users: 0, __v: 0, problems: 0 },
-      );
-    }
+      },
+      {
+        $addFields: {
+          totalProblems: {
+            $size: '$problems',
+          },
+        },
+      },
+      {
+        $project: {
+          enrollmentKey: !enrollmentKey && 0,
+        },
+      },
+    ]);
   }
 
   async findGroupById(id: string) {

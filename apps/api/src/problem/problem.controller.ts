@@ -30,6 +30,11 @@ export class ProblemController {
     return this.problemService.findAll();
   }
 
+  @Get('findAllProblemsOrGroupProblems')
+  async findAllProblemsOrGroupProblems(@Query('userId') userId: string) {
+    return this.problemService.findAllProblemsOrGroupProblems(userId);
+  }
+
   @Get('findoneWithDetails/:problemId')
   async findOne(@Param('problemId') problemId: string) {
     return this.problemService.findOne(problemId);

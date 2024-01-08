@@ -29,7 +29,16 @@ export const columns: ColumnDef<GetGroupsType>[] = [
   {
     accessorKey: "totalMembers",
     header: "Total Members",
-    cell: ({ row }) => <div>{row.getValue("totalMembers")}</div>,
+    cell: ({ row }) => (
+      <div className="text-center w-24">{row.getValue("totalMembers")}</div>
+    ),
+  },
+  {
+    accessorKey: "totalProblems",
+    header: "Total Problems",
+    cell: ({ row }) => (
+      <div className="text-center w-24">{row.getValue("totalProblems")}</div>
+    ),
   },
   {
     accessorKey: "createdAt",

@@ -26,7 +26,7 @@ export const config = {
     "/register",
     // "/problems",
     // "/problem/:path*",
-    "/groups",
+    // "/groups",
     "/settings/:path*",
   ],
 };
