@@ -14,11 +14,11 @@ const headerData = [
     name: "Problems",
     path: "/problems",
   },
-  {
-    key: 4,
-    name: "Ranks",
-    path: "/ranks",
-  },
+  // {
+  //   key: 4,
+  //   name: "Ranks",
+  //   path: "/ranks",
+  // },
 ];
 
 export default headerData;
