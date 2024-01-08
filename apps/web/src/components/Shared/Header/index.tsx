@@ -37,12 +37,19 @@ const HeaderUser = ({ data }: any) => {
     mutationFn: logoutMutation,
   });
 
+  const auth = useSelector(selectAuth);
+
+  const queryClient = useQueryClient();
+
   const handleLogout = () => {
     toast.promise(mutation.mutateAsync(), {
       loading: "Logging out...",
       success: () => {
         dispatch(authSlice.actions.logoutAuthData());
         router.push("/login");
+        queryClient.invalidateQueries({
+          queryKey: ["group", "problems", auth.userId],
+        });
         return "Logout successfully";
       },
       error: (err: AxiosError) => {
@@ -159,7 +166,6 @@ const Header = () => {
               className="flex-none text-xl font-semibold"
               href="/"
               aria-label="Brand"
-              as={"image"}
             >
               <Image
                 priority={true}

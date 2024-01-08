@@ -17,7 +17,7 @@ const Problems = ({ userId }: { userId: string }) => {
   const { data, isLoading } = useQuery({
     queryKey: ["group", "problems", userId],
     queryFn: () => getAllProblemsOrGroupProblems(userId),
-    enabled: !!userId,
+    // enabled: !!userId,
   });
 
   const columns: ColumnDef<ProblemsType>[] = [

@@ -93,8 +93,10 @@ const problemsApi = {
   getAllProblemsOrGroupProblems: async (
     userId?: string
   ): Promise<GetAllProblemsOrGroupProblemsReturnType> => {
+    let url = "/problem/findAllProblemsOrGroupProblems";
+    if (userId) url += `?userId=${userId}`;
     const response = await baseApi({
-      url: `/problem/findAllProblemsOrGroupProblems?userId=${userId}`,
+      url: url,
       method: "GET",
     });
     return response.data;

@@ -35,12 +35,6 @@ export class ProblemDetail {
   @Prop({ default: null })
   pdfUrl: string;
 
-  // @Prop({
-  //   required: true,
-  //   type: [Description],
-  // })
-  // problemDescription: Description[];
-
   @Prop({
     default: null,
   })

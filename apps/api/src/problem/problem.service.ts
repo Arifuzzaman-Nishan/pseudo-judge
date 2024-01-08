@@ -171,7 +171,18 @@ export class ProblemService {
 
   async findAllProblemsOrGroupProblems(userId: string) {
     let groupsWithProblems = null;
-    if (userId) {
+
+    const group = await this.groupRepository.findOne({
+      users: {
+        $in: [new mongoose.Types.ObjectId(userId)],
+      },
+    });
+
+    // Check if group is not null before calling toObject
+    const groupObject = group ? group.toObject() : null;
+    const isUserInGroup = groupObject != null;
+
+    if (userId && isUserInGroup) {
       [groupsWithProblems] = await this.groupRepository.aggregate<{
         problems: Array<{
           _id: string;

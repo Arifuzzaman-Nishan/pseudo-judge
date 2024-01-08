@@ -161,12 +161,19 @@ const CodeEditorFooter = () => {
   const auth = useSelector(selectAuth);
   const router = useRouter();
 
-  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+  const [isLoginAlertOpen, setIsLoginAlertOpen] = useState<boolean>(false);
+  const [isGroupJoinAlertOpen, setIsGroupJoinAlertOpen] =
+    useState<boolean>(false);
 
   const handleCodeSubmit = async () => {
     if (!auth.isLogin) {
-      setIsAlertOpen(true);
+      setIsLoginAlertOpen(true);
+      return;
     } else {
+      if (!auth.isUserInGroup) {
+        setIsGroupJoinAlertOpen(true);
+        return;
+      }
       const newCodeState = {
         ...codeState,
         userId: authState.userId,
@@ -200,8 +207,20 @@ const CodeEditorFooter = () => {
         </div>
 
         <AlertDialogComponent
-          isOpen={isAlertOpen}
-          setIsOpen={setIsAlertOpen}
+          isOpen={isGroupJoinAlertOpen}
+          setIsOpen={setIsGroupJoinAlertOpen}
+          title="Group Join Required!"
+          description="You cannot submit code. please join a group"
+          footerJSX={
+            <AlertDialogAction onClick={() => router.push("/groups")}>
+              Join Group
+            </AlertDialogAction>
+          }
+        />
+
+        <AlertDialogComponent
+          isOpen={isLoginAlertOpen}
+          setIsOpen={setIsLoginAlertOpen}
           title="Login Required!"
           description="You cannot submit code. please login first"
           footerJSX={

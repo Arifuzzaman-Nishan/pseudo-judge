@@ -27,27 +27,46 @@ export class GroupService {
   }
 
   async findAllGroups(enrollmentKey: boolean) {
-    return this.groupRepository.aggregate([
-      {
-        $addFields: {
-          totalMembers: {
-            $size: '$users',
+    if (enrollmentKey) {
+      return this.groupRepository.aggregate([
+        {
+          $addFields: {
+            totalMembers: {
+              $size: '$users',
+            },
           },
         },
-      },
-      {
-        $addFields: {
-          totalProblems: {
-            $size: '$problems',
+        {
+          $addFields: {
+            totalProblems: {
+              $size: '$problems',
+            },
           },
         },
-      },
-      {
-        $project: {
-          enrollmentKey: !enrollmentKey && 0,
+      ]);
+    } else {
+      return this.groupRepository.aggregate([
+        {
+          $addFields: {
+            totalMembers: {
+              $size: '$users',
+            },
+          },
         },
-      },
-    ]);
+        {
+          $addFields: {
+            totalProblems: {
+              $size: '$problems',
+            },
+          },
+        },
+        {
+          $project: {
+            enrollmentKey: 0,
+          },
+        },
+      ]);
+    }
   }
 
   async findGroupById(id: string) {

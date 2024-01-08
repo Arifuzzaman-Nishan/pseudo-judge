@@ -279,9 +279,8 @@ const Problem = ({ problemId }: { problemId: string }) => {
             }}
             className="code__editor h-full relative overflow-hidden"
           >
-            <div>
+            <div className="mt-14">
               <div className="h-full overflow-hidden">
-                <h2>Editor...</h2>
                 <CodeEditor />
               </div>
             </div>

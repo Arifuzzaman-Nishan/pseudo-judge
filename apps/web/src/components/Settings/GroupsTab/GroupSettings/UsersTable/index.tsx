@@ -12,6 +12,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
 import React, { useState } from "react";
 import UsersAddDialog from "./UsersAddDialog";
+import Link from "next/link";
 
 const UsersTable = ({ groupId }: { groupId: string }) => {
   const queryClient = useQueryClient();
@@ -57,7 +58,14 @@ const UsersTable = ({ groupId }: { groupId: string }) => {
       accessorKey: "fullName",
       header: "Full Name",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("fullName")}</div>
+        <div className="capitalize ">
+          <Link
+            className="text-blue-500"
+            href={`/user/${row.original.username}`}
+          >
+            {row.getValue("fullName")}
+          </Link>
+        </div>
       ),
     },
     {
