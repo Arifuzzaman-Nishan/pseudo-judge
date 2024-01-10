@@ -3,7 +3,6 @@ import getQueryClient from "@/lib/tanstackQuery/utils/getQueryClient";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import React from "react";
 import { cookies } from "next/headers";
-import * as jose from "jose";
 import { getAllProblemsOrGroupProblems } from "@/lib/tanstackQuery/api/problemsApi";
 import { Metadata } from "next";
 
