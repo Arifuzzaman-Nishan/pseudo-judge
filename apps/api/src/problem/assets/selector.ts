@@ -157,8 +157,9 @@ export const uvaOjSelectors: Array<SelectorType> = [
   {
     key: 'pdfUrl',
     selector: () => {
-      const element =
-        document.querySelector<HTMLIFrameElement>('#frame-description');
+      const element = document.querySelector<HTMLIFrameElement>(
+        '#col3_content_wrapper > iframe',
+      );
 
       if (!element) {
         return null;
@@ -166,7 +167,7 @@ export const uvaOjSelectors: Array<SelectorType> = [
 
       const pdfUrl = element?.src;
 
-      return pdfUrl;
+      return pdfUrl.replace(/(\d+)\.html$/, 'p$1.pdf');
     },
   },
   { key: 'title', selector: 'table > tbody > tr:nth-child(2) > td > h3' },

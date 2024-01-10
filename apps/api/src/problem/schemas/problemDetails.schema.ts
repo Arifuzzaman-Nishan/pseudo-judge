@@ -35,6 +35,9 @@ export class ProblemDetail {
   @Prop({ default: null })
   pdfUrl: string;
 
+  @Prop({ default: null })
+  newPdfUrl: string;
+
   @Prop({
     default: null,
   })

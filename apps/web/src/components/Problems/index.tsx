@@ -73,7 +73,9 @@ const Problems = ({ userId }: { userId: string }) => {
   return (
     <Container>
       <div>
-        <h3>{data?.groupName} Problems</h3>
+        <div className="capitalize text-xl">
+          <h2>{data?.groupName} Problems</h2>
+        </div>
         <TableComponent
           isLoading={isLoading}
           columns={columns}

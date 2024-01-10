@@ -7,6 +7,7 @@ import TanstackProvider from "@/lib/tanstackQuery/utils/TanstackProvider";
 import Layout from "@/components/Shared/Layout";
 import ReduxProvider from "@/lib/redux/provider";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/Shared/ThemeProvider";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
@@ -24,21 +25,28 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={outfit.className} suppressHydrationWarning={true}>
-        <ReduxProvider>
-          <TanstackProvider>
-            <Layout>
-              {children}
-              <Toaster
-                richColors
-                closeButton
-                toastOptions={{
-                  className: "class",
-                }}
-                duration={3000}
-              />
-            </Layout>
-          </TanstackProvider>
-        </ReduxProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ReduxProvider>
+            <TanstackProvider>
+              <Layout>
+                {children}
+                <Toaster
+                  richColors
+                  closeButton
+                  toastOptions={{
+                    className: "class",
+                  }}
+                  duration={3000}
+                />
+              </Layout>
+            </TanstackProvider>
+          </ReduxProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

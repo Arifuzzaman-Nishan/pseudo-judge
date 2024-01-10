@@ -15,7 +15,7 @@ const Container: FC<Props> = ({ children, ref, bgLayer, id }) => {
       className="relative w-full overflow-hidden overflow-x-clip"
     >
       {bgLayer}
-      <div className="bg-pattern pt-32 prose max-w-full">
+      <div className="bg-pattern pt-32">
         <div className="container mx-auto">{children}</div>
       </div>
     </section>

@@ -1,6 +1,10 @@
+"use client";
+
 import React from "react";
 import { Button } from "../ui/button";
 import Lottie from "../Shared/Lottie";
+import { useTheme } from "next-themes";
+import Link from "next/link";
 
 const BgLayerUp = () => {
   return (
@@ -37,8 +41,9 @@ const BgLayerDown = () => {
 };
 
 const Home = () => {
+  const { theme } = useTheme();
   return (
-    <section className="relative w-full overflow-hidden overflow-x-clip bg-slate-100 lg:h-screen isolate">
+    <section className="relative w-full overflow-hidden overflow-x-clip  lg:h-screen isolate">
       <BgLayerUp />
       <div className="lg:h-full flex items-center bg-pattern">
         <div className="container mx-auto">
@@ -49,17 +54,26 @@ const Home = () => {
                   <span className="text-indigo-500 block mb-2">
                     Pseudo Judge
                   </span>
-                  <span>Master the Art of Problem Solving</span>
+                  <span className="text-foreground">
+                    Master the Art of Problem Solving
+                  </span>
                 </h1>
 
-                <p className="text-lg leading-8 text-gray-600">
+                <p className="text-lg leading-8 text-muted-foreground">
                   Dive into a world of coding challenges from UVA, LightOJ, and
                   Timus Online Judge. Track your progress, sharpen your skills,
                   and master problem-solving with Pseudo Judge – your partner in
                   programming excellence!
                 </p>
-                <div className="">
-                  <Button className="py-6">Start Coding</Button>
+                <div>
+                  <Link href="/problems">
+                    <Button
+                      className="py-6 font-semibold"
+                      variant={theme === "light" ? "default" : "secondary"}
+                    >
+                      Explore Problems
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>

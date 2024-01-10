@@ -35,7 +35,7 @@ const htmlParserOptions: HTMLReactParserOptions = {
 
         return (
           <div className="relative overflow-x-auto mt-5">
-            <table className="w-full text-sm text-center rtl:text-right text-gray-500">
+            <table className="w-full text-sm text-center rtl:text-right">
               {domToReact(domNode.children as DOMNode[], htmlParserOptions)}
             </table>
           </div>
@@ -55,6 +55,12 @@ const htmlParserOptions: HTMLReactParserOptions = {
           <td className="px-6 py-4 whitespace-nowrap border">
             {domToReact(domNode.children as DOMNode[], htmlParserOptions)}
           </td>
+        );
+      } else if (domNode.tagName === "strong") {
+        return (
+          <strong className="text-primary">
+            {domToReact(domNode.children as DOMNode[], htmlParserOptions)}
+          </strong>
         );
       }
     }

@@ -24,6 +24,7 @@ export type ProblemDetailsType = {
   sampleOutput: string;
   notes: string;
   pdfUrl: string;
+  newPdfUrl: string;
 };
 
 export type ProblemWithDetailsType = {
@@ -73,6 +74,7 @@ export type ProblemSubmissionReturnType = {
   createdAt: string;
   title: string;
   ojName?: string;
+  processing: boolean;
 };
 
 export type GetAllProblemsOrGroupProblemsReturnType = {

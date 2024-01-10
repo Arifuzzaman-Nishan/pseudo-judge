@@ -16,13 +16,13 @@ const ProblemSampleTable = ({
 }) => {
   return (
     <>
-      <Table className="border-collapse border border-slate-400">
+      <Table className="border-collapse border border-slate-400 text-md">
         <TableHeader>
           <TableRow>
-            <TableHead className="border border-slate-300">
+            <TableHead className="border border-slate-300 text-primary">
               Sample Input
             </TableHead>
-            <TableHead className="border border-slate-300">
+            <TableHead className="border border-slate-300 text-primary">
               Sample Output
             </TableHead>
           </TableRow>

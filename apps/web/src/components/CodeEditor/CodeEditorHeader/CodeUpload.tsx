@@ -26,10 +26,10 @@ const CodeUpload = () => {
   };
 
   return (
-    <div>
-      <label className="flex space-x-3 items-center p-2 bg-white text-blue-500 tracking-wide border cursor-pointer transition-colors duration-300 ease-in-out rounded-md hover:border-gray-300">
+    <div className="w-[180px]">
+      <label className="flex space-x-3 items-center p-2 tracking-wide border cursor-pointer transition-colors duration-300 ease-in-out rounded-md hover:border-gray-400">
         <UploadIcon className="w-6 h-6" />
-        <span className="leading-tight text-xs font-semibold">
+        <span className="text-xs font-semibold">
           {file ? file.name : "Upload Code"}
         </span>
         <input type="file" className="hidden" onChange={handleFileChange} />

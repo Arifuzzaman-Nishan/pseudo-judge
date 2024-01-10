@@ -144,7 +144,7 @@ const User = ({ username }: { username: string }) => {
     console.log("data totalSubmission is ", data.totalSubmissions);
     userProfile = (
       <>
-        <div className="border flex justify-center rounded-sm">
+        <div className="flex justify-center rounded-sm">
           <Image
             className="rounded-full"
             width={100}
@@ -155,8 +155,10 @@ const User = ({ username }: { username: string }) => {
           />
         </div>
         <div className="text-center">
-          <p className="mb-0">{data.fullName}</p>
-          <span>{data.email}</span>
+          <h3 className="text-lg mt-5">{data.fullName}</h3>
+          <span className="text-muted-foreground mb-11 block">
+            {data.email}
+          </span>
         </div>
       </>
     );
@@ -174,9 +176,19 @@ const User = ({ username }: { username: string }) => {
             {data.submissionCount.totalAttempts}
           </TableCell>
           <TableCell className="text-center">
-            {data.group.userIsInGroup ? "Joined" : "Not Joined"}
+            {data.group.userIsInGroup ? (
+              <span className="text-blue-500 font-semibold">Joined</span>
+            ) : (
+              <span className="text-red-500 font-semibold">Not Joined</span>
+            )}
           </TableCell>
-          <TableCell className="font-medium">{data.group.groupName}</TableCell>
+          <TableCell className="font-medium">
+            {data.group.groupName ? (
+              <span className="text-blue-500">{data.group.groupName}</span>
+            ) : (
+              "-"
+            )}
+          </TableCell>
         </TableRow>
       </TableBody>
     );
@@ -202,7 +214,7 @@ const User = ({ username }: { username: string }) => {
             </div>
           </div>
         </div>
-        <div className="max-w-5xl mx-auto mt-6">
+        <div className="max-w-5xl mx-auto mt-16">
           <UserTab
             acceptedSubmission={data?.acceptedSubmissions ?? []}
             totalSubmission={data?.totalSubmissions ?? []}

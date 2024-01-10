@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { UserRepository } from '@/user/user.repository';
 import { ProblemSubmissionRepository } from './repositories/problemSubmission.repository';
 import { GroupRepository } from '@/group/group.repository';
+import axios from 'axios';
 
 export enum OJName {
   TIMUS = 'timus',
@@ -46,8 +47,26 @@ export class ProblemService {
     private readonly groupRepository: GroupRepository,
   ) {}
 
+  async getPdfUrl(url: string) {
+    try {
+      const response = await axios({
+        method: 'get',
+        url: url,
+        responseType: 'arraybuffer',
+      });
+
+      const pdfBase64 = Buffer.from(response.data, 'binary').toString('base64');
+      const fileUrl = `data:application/pdf;base64,${pdfBase64}`;
+
+      return fileUrl;
+    } catch (err: any) {
+      console.log('error is ', err.message);
+      return null;
+    }
+  }
+
   async crawlProblems(dto: CrawlProblemsDto) {
-    console.log('dto is ', dto);
+    // console.log('dto is ', dto);
 
     const { url, ojName } = dto;
     await this.puppeteerService.launch({
@@ -81,7 +100,7 @@ export class ProblemService {
     await Promise.all(
       selectorData.map(async (item) => {
         if (item.key === 'problemDescriptionHTML') {
-          console.log('item.key problemdescription is ', item.key);
+          // console.log('item.key problemdescription is ', item.key);
           if (ojName === OJName.LOJ) {
             problemData[item.key] =
               await this.puppeteerService.getLightOjProblemDescription(
@@ -100,22 +119,35 @@ export class ProblemService {
       }),
     );
 
-    if (ojName === OJName.UVA) {
-      const newUrl = `https://vjudge.net/problem/${ojName}-${problemData.ojProblemId}`;
-      await this.puppeteerService.goto(newUrl);
+    // if (ojName === OJName.UVA) {
+    //   const newUrl = `https://vjudge.net/problem/${ojName}-${problemData.ojProblemId}`;
+    //   await this.puppeteerService.goto(newUrl);
 
-      problemData['pdfUrl'] =
-        await this.puppeteerService.getDataFromHTMLSelector(
-          selectorData[0].selector,
-        );
-    }
+    //   problemData['pdfUrl'] =
+    //     await this.puppeteerService.getDataFromHTMLSelector(
+    //       selectorData[0].selector,
+    //     );
+    // }
 
     await this.puppeteerService.close();
+    console.log('problem data is ', problemData);
 
     const { title, ojProblemId, ...problemDetailsData } = problemData;
 
-    const problemDetails =
-      await this.problemDetailsRepository.create(problemDetailsData);
+    const newPdfUrl = await this.getPdfUrl(problemData.pdfUrl);
+    console.log('new pdf url is ', newPdfUrl);
+
+    if (!newPdfUrl && ojName === OJName.UVA) {
+      throw new HttpException(
+        'Failed to crawl problem',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    const problemDetails = await this.problemDetailsRepository.create({
+      ...problemDetailsData,
+      newPdfUrl,
+    });
 
     const finalProblemData = {
       ...dto,
@@ -123,6 +155,9 @@ export class ProblemService {
       ojProblemId,
       problemDetails: problemDetails,
     };
+
+    console.log('final problem data is ', finalProblemData);
+
     return this.problemRepository.create(finalProblemData);
   }
 
@@ -253,7 +288,7 @@ export class ProblemService {
   async findOne(problemId: string) {
     console.log('problemId is ', problemId);
 
-    const [problemDetails] = await this.problemRepository.aggregate([
+    const [problem] = await this.problemRepository.aggregate([
       {
         $match: {
           _id: new mongoose.Types.ObjectId(problemId),
@@ -274,7 +309,7 @@ export class ProblemService {
       },
     ]);
 
-    return problemDetails;
+    return problem;
   }
 
   async deleteRelatedProblem(problemId: string, problemDetailsId: string) {

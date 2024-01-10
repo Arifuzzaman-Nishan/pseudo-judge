@@ -123,7 +123,7 @@ const TableComponent = <T extends { _id?: string }>({
     <div className="w-full">
       <div className="flex items-center py-4">{children}</div>
       <div className="rounded-md border">
-        <Table>
+        <Table className="m-0">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

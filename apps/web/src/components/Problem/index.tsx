@@ -3,7 +3,6 @@
 import {
   ProblemDetailsType,
   ProblemSubmissionReturnType,
-  ProblemWithDetailsType,
   getProblemSubmissionsQuery,
   getProblemWithDetails,
 } from "@/lib/tanstackQuery/api/problemsApi";
@@ -22,63 +21,38 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DateTime } from "luxon";
 import { Button } from "../ui/button";
 import TableComponent from "../Shared/TableComponent";
-import SyntaxHighlighter from "react-syntax-highlighter";
-import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import DialogComponent from "../Shared/DialogComponent";
 import { OJName } from "@/types";
+import PdfViewer from "./PdfViewer";
+import { Badge } from "@/components/ui/badge";
+import { relativeTime, verdictColor } from "@/utils/helper";
+import CodeHighlighter from "../Shared/CodeHighlighter";
+import { LoadingSpinner } from "../Shared/Loading";
 
 type ProblemStatementProps = {
   pblmDetails: ProblemDetailsType;
-};
-interface IPdfViewerProps {
-  url: string;
-}
-
-const PdfViewer: React.FC<IPdfViewerProps> = ({ url }) => {
-  return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      <iframe
-        src={url}
-        title="PDF Viewer"
-        width="100%"
-        height="2048px"
-        style={{
-          height: "1511px",
-          border: "none",
-        }}
-        frameBorder="0"
-        scrolling="no"
-        allowFullScreen
-      />
-    </div>
-  );
 };
 
 const ProblemStatement: FC<ProblemStatementProps> = ({ pblmDetails }) => {
   return (
     <>
-      <div>
-        <div className="pblm__description mt-5">
+      <div className="text-lg">
+        <div className="pblm__description mt-5 text-primary">
           {parse(
             pblmDetails?.problemDescriptionHTML as string,
             htmlParserOptions
           )}
         </div>
         <div className="pblm__input__description mt-5">
-          <h2>Input</h2>
+          <h2 className="text-primary">Input</h2>
           <p>{pblmDetails?.inputDescription}</p>
         </div>
         <div className="pblm__output__description mt-5">
-          <h2>Output</h2>
+          <h2 className="text-primary">Output</h2>
           <p>{pblmDetails?.outputDescription}</p>
         </div>
         <div className="pblm__sample__input__output mt-5">
-          <h2>Sample</h2>
+          <h2 className="text-primary">Sample</h2>
           <ProblemSampleTable pblmDetails={pblmDetails as ProblemDetailsType} />
         </div>
       </div>
@@ -89,11 +63,7 @@ const ProblemStatement: FC<ProblemStatementProps> = ({ pblmDetails }) => {
 const CodeDialog = ({ codeStr }: { codeStr: string }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const content = (
-    <SyntaxHighlighter language="cpp" showLineNumbers style={docco}>
-      {codeStr}
-    </SyntaxHighlighter>
-  );
+  const content = <CodeHighlighter codeStr={codeStr} />;
 
   return (
     <>
@@ -106,11 +76,6 @@ const CodeDialog = ({ codeStr }: { codeStr: string }) => {
       />
     </>
   );
-};
-
-const relativeTime = (time: string) => {
-  const dt = DateTime.fromISO(time);
-  return dt.toRelative();
 };
 
 const columns: ColumnDef<ProblemSubmissionReturnType>[] = [
@@ -139,7 +104,21 @@ const columns: ColumnDef<ProblemSubmissionReturnType>[] = [
   {
     accessorKey: "status",
     header: "Verdict",
-    cell: ({ row }) => <div>{row.getValue("status")}</div>,
+    cell: ({ row }) => (
+      <div>
+        <div className="flex items-center gap-x-3">
+          {row.original.processing && <LoadingSpinner />}
+          <Badge
+            className={`${
+              verdictColor[row.getValue("status") as keyof typeof verdictColor]
+            } text-white`}
+            variant="outline"
+          >
+            {row.getValue("status")}
+          </Badge>
+        </div>
+      </div>
+    ),
   },
   {
     header: "Action",
@@ -194,7 +173,7 @@ const ProblemTab: FC<ProblemTabProps> = ({ pblmDetails }) => {
         </TabsList>
         <TabsContent value="statement">
           {codeState.ojName === OJName.UVA ? (
-            <PdfViewer url={pblmDetails.pdfUrl} />
+            <PdfViewer url={pblmDetails.newPdfUrl} />
           ) : (
             <ProblemStatement pblmDetails={pblmDetails as ProblemDetailsType} />
           )}
@@ -243,27 +222,47 @@ const Problem = ({ problemId }: { problemId: string }) => {
 
   return (
     <section
-      className="h-screen flex flex-col pt-16 mx-auto"
+      className="h-screen flex flex-col pt-16  mx-auto"
       ref={containerRef}
     >
-      <div className="h-full prose max-w-full overflow-y-hidden">
+      <div className="h-full  overflow-y-hidden ">
         <div className="flex flex-wrap h-full w-full p-2">
           <div
-            className="code__description h-full overflow-y-auto px-20"
+            className="code__description h-full overflow-y-auto px-20 prose max-w-full text-foreground"
             style={{
               width: `calc(${widths.leftWidth}% - 4px)`,
             }}
           >
             <div className="pblm__info">
-              <h2>{data?.title}</h2>
-              <div className="flex items-center space-x-7">
-                <p>{pblmDetails?.timeLimit}</p>
-                <p>{pblmDetails?.memoryLimit}</p>
-                <p>{data?.difficultyRating}</p>
-                <p>{data?.ojName}</p>
+              <h2 className="text-foreground">{data?.title}</h2>
+              <div className="flex items-center">
+                <div>
+                  <Badge variant="outline" className="text-sm">
+                    {pblmDetails?.timeLimit}
+                  </Badge>
+                </div>
+                <div className="ml-4">
+                  {pblmDetails?.memoryLimit && (
+                    <Badge variant="outline" className="text-sm">
+                      {pblmDetails?.memoryLimit}
+                    </Badge>
+                  )}
+                </div>
+                <div className="ml-4">
+                  <Badge variant="secondary" className="text-sm">
+                    {data?.difficultyRating}
+                  </Badge>
+                </div>
+                <div className="ml-8">
+                  <Badge variant="secondary" className="text-sm lowercase">
+                    {data?.ojName}
+                  </Badge>
+                </div>
               </div>
             </div>
-            <ProblemTab pblmDetails={pblmDetails as ProblemDetailsType} />
+            <div className="mt-10">
+              <ProblemTab pblmDetails={pblmDetails as ProblemDetailsType} />
+            </div>
           </div>
 
           <div

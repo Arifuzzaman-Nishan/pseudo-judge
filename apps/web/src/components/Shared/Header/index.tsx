@@ -3,7 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect } from "react";
-import pseudoJudgeLogo from "../../../../public/assets/images/logo1.png";
+import darkLogo from "../../../../public/assets/images/dark-logo.png";
+import whiteLogo from "../../../../public/assets/images/white-logo.png";
+
 import { usePathname } from "next/navigation";
 import headerData from "../../../../public/assets/data/headerdata";
 import { Button } from "@/components/ui/button";
@@ -29,6 +31,8 @@ import { useSelector } from "react-redux";
 import { AxiosError } from "axios";
 import errorFn from "../Error";
 import { useRouter } from "next-nprogress-bar";
+import { ModeToggle } from "./ModeToggle";
+import { useTheme } from "next-themes";
 
 const HeaderUser = ({ data }: any) => {
   const dispatch = useDispatch();
@@ -107,6 +111,8 @@ const Header = () => {
   const dispatch = useDispatch();
   const auth = useSelector(selectAuth);
 
+  const { theme } = useTheme();
+
   const pathname = usePathname();
 
   const queryClient = useQueryClient();
@@ -155,7 +161,7 @@ const Header = () => {
   return (
     <>
       <header
-        className={`fixed top-0 left-auto right-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full text-sm sm:py-0 backdrop-blur transition-colors duration-500 bg-slate-50/50 border-b`}
+        className={`fixed top-0 left-auto right-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full text-sm sm:py-0 backdrop-blur transition-colors duration-500  border-b`}
       >
         <nav
           className="relative container w-full mx-auto px-4 sm:flex sm:items-center sm:justify-between sm:px-3 py-2"
@@ -169,7 +175,7 @@ const Header = () => {
             >
               <Image
                 priority={true}
-                src={pseudoJudgeLogo}
+                src={theme === "light" ? whiteLogo : darkLogo}
                 width="0"
                 height="0"
                 sizes="(min-width: 1200px) 3vw, (min-width: 1024px) 7vw, (min-width:425px) 9vw, 17vw"
@@ -240,7 +246,9 @@ const Header = () => {
                     </Link>
                   );
                 })}
-
+              <div>
+                <ModeToggle />
+              </div>
               <div>{content}</div>
             </div>
           </div>
