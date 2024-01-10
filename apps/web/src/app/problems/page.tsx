@@ -3,7 +3,7 @@ import getQueryClient from "@/lib/tanstackQuery/utils/getQueryClient";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import React from "react";
 import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
+import * as jose from "jose";
 import { getAllProblemsOrGroupProblems } from "@/lib/tanstackQuery/api/problemsApi";
 import { Metadata } from "next";
 
@@ -19,8 +19,8 @@ export default async function ProblemsPage() {
 
   let userId = "";
   if (auth) {
-    const user = jwt.decode(auth);
-    userId = typeof user === "object" ? user?.userId : "";
+    const user = jose.decodeJwt(auth);
+    userId = typeof user === "object" ? (user as any)?.userId : "";
   }
 
   const queryClient = getQueryClient();

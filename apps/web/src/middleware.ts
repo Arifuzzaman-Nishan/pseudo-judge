@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import * as jose from "jose";
 
 export function middleware(request: NextRequest) {
   const authToken = request.cookies.get("auth")?.value;
 
   let isAdmin = false;
   if (authToken) {
-    const user = jwt.decode(authToken);
+    // const user = jwt.decode(authToken);
+
+    const user = jose.decodeJwt(authToken);
     console.log("user is ", user);
     isAdmin = typeof user === "object" ? user?.role === "admin" : false;
   }
