@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prod": "next start",
+    "prod": "next start --port ${PORT-3000}",
     "build": "next build",
     "lint": "next lint",
     "ui:add": "pnpm dlx shadcn-ui@latest add"
@@ -36,6 +36,7 @@
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "dotenv-cli": "^7.3.0",
     "gsap": "^3.12.4",
     "html-react-parser": "^5.0.10",
     "lucide-react": "^0.294.0",
