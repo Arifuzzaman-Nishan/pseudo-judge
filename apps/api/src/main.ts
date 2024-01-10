@@ -14,7 +14,10 @@ async function bootstrap() {
     credentials: true,
     origin: corsOrigin,
     exposedHeaders: ['X-Total-Count'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Accept',
   });
+
   app.setGlobalPrefix('api/v1');
 
   const port = process.env.PORT || 5000;
