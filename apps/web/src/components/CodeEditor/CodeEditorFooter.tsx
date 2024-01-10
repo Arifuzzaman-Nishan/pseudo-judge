@@ -78,10 +78,7 @@ const CodeEditorFooter = () => {
       solutionCodeMutation.mutate(+storedRunId);
     }
 
-    // if (storedRunId) {
-    //   // Trigger the mutation with the stored runId
-    //   solutionCodeMutation.mutate(+storedRunId);
-    // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [solutionCode, setSolutionCode] = useState<SolutionType>({
