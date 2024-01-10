@@ -23,6 +23,16 @@ export class AuthController {
       secure: process.env.NODE_ENV === 'production',
     });
 
+    const userInfo = JSON.stringify({
+      userId: registerData._id,
+      role: registerData.role,
+    });
+
+    res.cookie('userRole', userInfo, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
+
     res.send(registerData);
   }
 
@@ -31,11 +41,21 @@ export class AuthController {
   login(@Request() req: Req, @Response() res: Res) {
     const loginData = this.authService.login(req.user);
 
+    // console.log('loginData is ', loginData);
     res.cookie('auth', loginData.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
     });
 
+    const userInfo = JSON.stringify({
+      userId: loginData._id,
+      role: loginData.role,
+    });
+
+    res.cookie('userInfo', userInfo, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
     res.send(loginData);
   }
 
@@ -52,6 +72,7 @@ export class AuthController {
   async logout(@Request() req: Req, @Response() res: Res) {
     // const user = req.user;
     res.clearCookie('auth', { httpOnly: true });
+    res.clearCookie('userInfo', { httpOnly: true });
     res.send({ message: 'Logout Successful' });
   }
 }

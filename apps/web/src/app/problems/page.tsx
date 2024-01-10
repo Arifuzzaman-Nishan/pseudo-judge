@@ -15,12 +15,21 @@ export const metadata: Metadata = {
 
 export default async function ProblemsPage() {
   const cookieStore = cookies();
-  const auth = cookieStore.get("auth")?.value;
+  const userInfoCookie = cookieStore.get("userInfo")?.value;
+
+  let userInfo = null;
+  if (userInfoCookie) {
+    try {
+      userInfo = JSON.parse(userInfoCookie);
+    } catch (e) {
+      console.error("Error parsing JSON", e);
+      // Handle the error or set a default value for userInfo
+    }
+  }
 
   let userId = "";
-  if (auth) {
-    const user = jose.decodeJwt(auth);
-    userId = typeof user === "object" ? (user as any)?.userId : "";
+  if (userInfo) {
+    userId = typeof userInfo === "object" ? (userInfo as any)?.userId : "";
   }
 
   const queryClient = getQueryClient();
