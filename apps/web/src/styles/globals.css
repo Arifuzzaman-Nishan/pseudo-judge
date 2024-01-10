@@ -60,13 +60,13 @@
 }
 
 @layer components {
-  .Example__container__document .react-pdf__Page__svg svg {
+  /* .Example__container__document .react-pdf__Page__svg svg {
     @apply dark:bg-secondary dark:text-secondary-foreground;
   }
 
   .Example__container__document .react-pdf__Page__textContent span {
     @apply dark:text-secondary-foreground;
-  }
+  } */
 }
 
 .Example__container {

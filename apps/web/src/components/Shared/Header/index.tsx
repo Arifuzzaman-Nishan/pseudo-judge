@@ -90,12 +90,14 @@ const HeaderUser = ({ data }: any) => {
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>
-              <Link href="/settings">Settings</Link>
-            </span>
-          </DropdownMenuItem>
+          {auth?.role !== "user" && (
+            <DropdownMenuItem>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>
+                <Link href="/settings">Settings</Link>
+              </span>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
@@ -237,7 +239,7 @@ const Header = () => {
                       className={`font-medium sm:py-6 ${
                         isActive
                           ? "text-blue-500 hover:text-blue-600"
-                          : "text-gray-500 hover:text-blue-600"
+                          : "text-muted-foreground hover:text-blue-600"
                       }  `}
                       href={item.path}
                       aria-current="page"

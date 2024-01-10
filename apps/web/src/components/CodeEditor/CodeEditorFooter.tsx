@@ -11,16 +11,6 @@ import {
 } from "@/lib/tanstackQuery/api/problemsApi";
 
 import DialogComponent from "../Shared/DialogComponent";
-
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { selectAuth } from "@/lib/redux/slices/authSlice";
 import AlertDialogComponent from "../Shared/AlertDialogComponent";
 import { AlertDialogAction } from "../ui/alert-dialog";
@@ -29,50 +19,7 @@ import { toast } from "sonner";
 import { AxiosError } from "axios";
 import errorFn from "../Shared/Error";
 import { useTheme } from "next-themes";
-import CodeHighlighter from "../Shared/CodeHighlighter";
-import { LoadingSpinner } from "../Shared/Loading";
-
-type CodeSubmitDialogType = {
-  data: SolutionType;
-};
-
-const CodeSubmitDialog: FC<CodeSubmitDialogType> = ({ data }) => {
-  return (
-    <>
-      <div className="">
-        <div>
-          <Table>
-            <TableCaption></TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Status</TableHead>
-                <TableHead>Time</TableHead>
-                <TableHead>Memory</TableHead>
-                <TableHead>Lang</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">
-                  <div className="flex items-center gap-x-3">
-                    {data.status}
-                    {data.processing && <LoadingSpinner />}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {data.runtime ? data.runtime + "ms" : "-"}
-                </TableCell>
-                <TableCell>{data.memory ? data.memory + "kb" : "-"}</TableCell>
-                <TableCell>{data.language}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-        <CodeHighlighter codeStr={data?.code} />
-      </div>
-    </>
-  );
-};
+import CodeSubmitDialog from "../Shared/CodeDialog";
 
 const CodeEditorFooter = () => {
   const { theme } = useTheme();
@@ -115,10 +62,27 @@ const CodeEditorFooter = () => {
       if (data.processing === true) {
         setTimeout(() => {
           solutionCodeMutation.mutate(runId as number);
-        }, 1000);
+        }, 3000);
+      } else {
+        localStorage.removeItem("runId");
       }
     },
   });
+
+  useEffect(() => {
+    // Check if there's a runId in local storage when the component mounts
+    const storedRunId = localStorage?.getItem("runId");
+
+    if (storedRunId) {
+      setRunId(+storedRunId);
+      solutionCodeMutation.mutate(+storedRunId);
+    }
+
+    // if (storedRunId) {
+    //   // Trigger the mutation with the stored runId
+    //   solutionCodeMutation.mutate(+storedRunId);
+    // }
+  }, []);
 
   const [solutionCode, setSolutionCode] = useState<SolutionType>({
     status: "Pending",
@@ -171,6 +135,7 @@ const CodeEditorFooter = () => {
       if (submitCode) {
         setIsOpen(true);
         setRunId(submitCode.runId);
+        localStorage.setItem("runId", submitCode.runId.toString());
         solutionCodeMutation.mutate(submitCode.runId);
       }
     }

@@ -13,6 +13,9 @@ import Image from "next/image";
 import React, { useState } from "react";
 import UsersAddDialog from "./UsersAddDialog";
 import Link from "next/link";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
+import errorFn from "@/components/Shared/Error";
 
 const UsersTable = ({ groupId }: { groupId: string }) => {
   const queryClient = useQueryClient();
@@ -32,6 +35,13 @@ const UsersTable = ({ groupId }: { groupId: string }) => {
 
   const handleProblemRemoved = (userId: string) => {
     mutation.mutate({ groupId, userId });
+    toast.promise(mutation.mutateAsync({ groupId, userId }), {
+      loading: "Removing user...",
+      success: "User removed successfully",
+      error: (err: AxiosError) => {
+        return errorFn(err);
+      },
+    });
   };
 
   const columns: ColumnDef<UsersTableType>[] = [
@@ -88,7 +98,10 @@ const UsersTable = ({ groupId }: { groupId: string }) => {
       header: "Action",
       cell: ({ row }) => (
         <div>
-          <Button onClick={() => handleProblemRemoved(row.original._id)}>
+          <Button
+            variant="secondary"
+            onClick={() => handleProblemRemoved(row.original._id)}
+          >
             Remove
           </Button>
         </div>
@@ -110,7 +123,17 @@ const UsersTable = ({ groupId }: { groupId: string }) => {
 
   return (
     <div>
-      <h3 className="mb-0">Users Tables</h3>
+      <div>
+        <h3 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+          Users Tables
+        </h3>
+        <p className="leading-7 [&:not(:first-child)]:mt-6 text-muted-foreground">
+          In this table you can see all the Users that are added to this group.
+          You can add more users by clicking on the button Add Users below. You
+          can also remove users from this group by clicking on the remove
+          button.
+        </p>
+      </div>
 
       <TableComponent columns={columns} data={isSuccess ? problemsData : []}>
         <div className="ml-auto">

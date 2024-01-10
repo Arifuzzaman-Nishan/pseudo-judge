@@ -4,17 +4,22 @@ import { CookieJar } from 'tough-cookie';
 import { wrapper } from 'axios-cookiejar-support';
 import FormData from 'form-data';
 import { OJName } from '@/problem/problem.service';
+import { ConfigService } from '@nestjs/config';
 
 const jar = new CookieJar();
 const axiosClient = wrapper(axios.create({ jar }));
 
 @Injectable()
 export class VjudgeService {
+  constructor(private readonly configService: ConfigService) {}
+
   async login() {
-    console.log('from login...');
+    const email = this.configService.get<string>('VJUDGE_EMAIL');
+    const password = this.configService.get<string>('VJUDGE_PASSWORD');
+
     const loginFormData = new FormData();
-    loginFormData.append('username', 'arifuzzamannishan@gmail.com');
-    loginFormData.append('password', 'Anishan38@@');
+    loginFormData.append('username', email);
+    loginFormData.append('password', password);
 
     try {
       const res = await axiosClient({
@@ -41,9 +46,6 @@ export class VjudgeService {
     ojProblemId: string;
     codeStr: string;
   }) {
-    console.log('from submitCode...');
-    // console.log('ojName is ', ojName);
-    // console.log('ojProblemId', ojProblemId);
     const submitFormData = new FormData();
     submitFormData.append('method', '0');
     submitFormData.append('open', '1');

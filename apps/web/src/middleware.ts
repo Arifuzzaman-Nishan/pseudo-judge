@@ -1,8 +1,18 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
+import jwt from "jsonwebtoken";
 
 export function middleware(request: NextRequest) {
   const authToken = request.cookies.get("auth")?.value;
+
+  let isAdmin = false;
+  if (authToken) {
+    const user = jwt.decode(authToken);
+    console.log("user is ", user);
+    isAdmin = typeof user === "object" ? user?.role === "admin" : false;
+  }
+
+  // console.log("isAdmin is ", isAdmin);
 
   const loggedInUserNotAccessPaths =
     request.nextUrl.pathname === "/login" ||
@@ -15,6 +25,12 @@ export function middleware(request: NextRequest) {
   } else {
     if (!authToken) {
       return NextResponse.redirect(new URL("/login", request.url));
+    }
+  }
+
+  if (authToken) {
+    if (!isAdmin) {
+      return NextResponse.redirect(new URL("/problems", request.url));
     }
   }
 }

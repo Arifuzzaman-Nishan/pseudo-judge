@@ -52,14 +52,6 @@ export class PuppeteerService {
     }
   }
 
-  async getData(selector: string) {
-    await this.page.$eval(selector, (element: Element) => {
-      const image = element.getAttribute('src');
-      console.log('images are ', image);
-    });
-    return 'done';
-  }
-
   async getLightOjProblemDescription(selector: string) {
     const outerHTMLWithAttributes = await this.page.$eval(
       selector,
@@ -137,8 +129,7 @@ export class PuppeteerService {
     return new Promise((reslove) => setTimeout(reslove, ms));
   }
 
-  async typing(typingText: string, selector: string, logText: string) {
-    console.log(logText);
+  async typing(typingText: string, selector: string) {
     await this.page.waitForSelector(selector, {
       visible: true,
       timeout: 9000,

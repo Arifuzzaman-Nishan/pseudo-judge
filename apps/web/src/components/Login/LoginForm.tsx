@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +21,8 @@ import { AxiosError } from "axios";
 import errorFn from "../Shared/Error";
 import { useRouter } from "next-nprogress-bar";
 
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
+
 const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email",
@@ -32,6 +34,8 @@ const formSchema = z.object({
 
 const LoginForm = () => {
   const router = useRouter();
+
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -84,16 +88,27 @@ const LoginForm = () => {
             control={form.control}
             name="password"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="relative">
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     required
                     placeholder="********"
                     {...field}
                   />
                 </FormControl>
+                {showPassword ? (
+                  <EyeIcon
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-[2.2rem] h-5 w-5 cursor-pointer"
+                  />
+                ) : (
+                  <EyeSlashIcon
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-[2.2rem] h-5 w-5 cursor-pointer"
+                  />
+                )}
                 <FormMessage />
               </FormItem>
             )}

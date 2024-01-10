@@ -23,8 +23,6 @@ const htmlParserOptions: HTMLReactParserOptions = {
           .map(extractText)
           .join("");
 
-        // console.log("Inner text of code tag:", innerText);
-
         return (
           <SyntaxHighlighter language="cpp" showLineNumbers style={docco}>
             {innerText}

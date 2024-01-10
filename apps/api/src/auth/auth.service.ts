@@ -1,6 +1,7 @@
 import { JWTService } from '@/auth/jwt/jwt.service';
 import { GroupRepository } from '@/group/group.repository';
 import { UserRepository } from '@/user/user.repository';
+import { UserRole } from '@/user/user.schema';
 import { UserService } from '@/user/user.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
@@ -22,6 +23,7 @@ export class AuthService {
       userId: newUser._id as unknown as string,
       username: newUser.username,
       email: newUser.email,
+      role: newUser.role as UserRole,
     };
 
     delete newUser.password;
@@ -38,6 +40,7 @@ export class AuthService {
       userId: dto._id as unknown as string,
       username: dto.username,
       email: dto.email,
+      role: dto.role as UserRole,
     };
 
     return {

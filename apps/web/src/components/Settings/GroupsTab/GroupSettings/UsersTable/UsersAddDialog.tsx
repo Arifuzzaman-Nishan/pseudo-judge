@@ -1,4 +1,5 @@
 import DialogComponent from "@/components/Shared/DialogComponent";
+import errorFn from "@/components/Shared/Error";
 import TableComponent from "@/components/Shared/TableComponent";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -9,8 +10,10 @@ import {
 } from "@/lib/tanstackQuery/api/groupsApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
+import { AxiosError } from "axios";
 import Image from "next/image";
 import React, { FC, useCallback, useState } from "react";
+import { toast } from "sonner";
 
 type UsersAddDialogProps = {
   isDialogOpen: boolean;
@@ -121,10 +124,16 @@ const UsersAddDialog: FC<UsersAddDialogProps> = ({
 
   const handleUsersAdd = () => {
     if (selectedRowIds.length > 0) {
-      mutation.mutate({
-        groupId,
-        userIds: selectedRowIds,
-      });
+      toast.promise(
+        mutation.mutateAsync({ groupId, userIds: selectedRowIds }),
+        {
+          loading: "Adding users...",
+          success: "Users added successfully",
+          error: (err: AxiosError) => {
+            return errorFn(err);
+          },
+        }
+      );
     }
   };
 

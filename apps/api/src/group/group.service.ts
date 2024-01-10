@@ -16,9 +16,6 @@ export class GroupService {
   async createGroup(dto: any) {
     const enrollmentKey = this.groupHelperService.generateEnrollmentKey();
 
-    const newDto = { ...dto, enrollmentKey };
-    console.log('newDto is ', newDto);
-
     const result = await this.groupRepository.create({
       ...dto,
       enrollmentKey: enrollmentKey,
@@ -95,7 +92,6 @@ export class GroupService {
   // problem operations
   async problemsAddedIntoGroup(dto: any) {
     const { problemIds, groupId } = dto;
-    console.log('dtos is ', dto);
 
     const group = await this.groupRepository.findOne({
       _id: groupId,
@@ -216,7 +212,6 @@ export class GroupService {
   // user operations
   async usersAddedIntoGroup(dto: any) {
     const { userIds, groupId } = dto;
-    console.log('dtos is ', dto);
 
     const group = await this.groupRepository.findOne({
       _id: groupId,

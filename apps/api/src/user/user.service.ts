@@ -36,8 +36,6 @@ export class UserService {
       s: '70',
     });
 
-    console.log('imageUrl is ', imageUrl);
-
     const newUser = (
       await this.userRepository.create({
         ...restdto,

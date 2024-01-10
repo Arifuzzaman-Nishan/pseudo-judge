@@ -18,16 +18,13 @@ import { codeSlice, selectCode, useDispatch, useSelector } from "@/lib/redux";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { selectAuth } from "@/lib/redux/slices/authSlice";
 import { ColumnDef } from "@tanstack/react-table";
-import { DateTime } from "luxon";
-import { Button } from "../ui/button";
 import TableComponent from "../Shared/TableComponent";
-import DialogComponent from "../Shared/DialogComponent";
 import { OJName } from "@/types";
 import PdfViewer from "./PdfViewer";
 import { Badge } from "@/components/ui/badge";
 import { relativeTime, verdictColor } from "@/utils/helper";
-import CodeHighlighter from "../Shared/CodeHighlighter";
 import { LoadingSpinner } from "../Shared/Loading";
+import CodeDialog from "../Shared/CodeDialog";
 
 type ProblemStatementProps = {
   pblmDetails: ProblemDetailsType;
@@ -56,24 +53,6 @@ const ProblemStatement: FC<ProblemStatementProps> = ({ pblmDetails }) => {
           <ProblemSampleTable pblmDetails={pblmDetails as ProblemDetailsType} />
         </div>
       </div>
-    </>
-  );
-};
-
-const CodeDialog = ({ codeStr }: { codeStr: string }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
-  const content = <CodeHighlighter codeStr={codeStr} />;
-
-  return (
-    <>
-      <Button onClick={() => setIsOpen(true)}>View Code</Button>
-      <DialogComponent
-        title="Code"
-        content={content}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      />
     </>
   );
 };
@@ -110,7 +89,11 @@ const columns: ColumnDef<ProblemSubmissionReturnType>[] = [
           {row.original.processing && <LoadingSpinner />}
           <Badge
             className={`${
-              verdictColor[row.getValue("status") as keyof typeof verdictColor]
+              verdictColor[
+                (
+                  row.getValue("status") as string
+                ).toLowerCase() as keyof typeof verdictColor
+              ]
             } text-white`}
             variant="outline"
           >
@@ -124,7 +107,7 @@ const columns: ColumnDef<ProblemSubmissionReturnType>[] = [
     header: "Action",
     cell: ({ row }) => (
       <>
-        <CodeDialog codeStr={row.original.code} />
+        <CodeDialog data={row.original} />
       </>
     ),
   },

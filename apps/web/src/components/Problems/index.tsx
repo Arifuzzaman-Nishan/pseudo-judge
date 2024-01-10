@@ -12,6 +12,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import TableComponent from "../Shared/TableComponent";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { Badge } from "../ui/badge";
 
 const Problems = ({ userId }: { userId: string }) => {
   const { data, isLoading } = useQuery({
@@ -36,11 +37,20 @@ const Problems = ({ userId }: { userId: string }) => {
     {
       accessorKey: "ojName",
       header: "OJ Name",
-      cell: ({ row }) => <div>{row.getValue("ojName")}</div>,
+      cell: ({ row }) => (
+        <div>
+          <Badge variant="secondary">{row.getValue("ojName")}</Badge>
+        </div>
+      ),
     },
     {
       accessorKey: "difficultyRating",
       header: "Difficulty Rating",
+      cell: ({ row }) => (
+        <div>
+          <Badge variant="secondary">{row.getValue("difficultyRating")}</Badge>
+        </div>
+      ),
     },
     {
       accessorKey: "totalSolved",
@@ -74,7 +84,9 @@ const Problems = ({ userId }: { userId: string }) => {
     <Container>
       <div>
         <div className="capitalize text-xl">
-          <h2>{data?.groupName} Problems</h2>
+          <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+            {data?.groupName} Problems
+          </h2>
         </div>
         <TableComponent
           isLoading={isLoading}

@@ -1,4 +1,5 @@
 import DialogComponent from "@/components/Shared/DialogComponent";
+import errorFn from "@/components/Shared/Error";
 import TableComponent from "@/components/Shared/TableComponent";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -8,7 +9,9 @@ import {
 } from "@/lib/tanstackQuery/api/groupsApi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
+import { AxiosError } from "axios";
 import React, { FC, useCallback, useState } from "react";
+import { toast } from "sonner";
 
 type ProblemAddDialogProps = {
   isDialogOpen: boolean;
@@ -109,10 +112,16 @@ const ProblemsAddDialog: FC<ProblemAddDialogProps> = ({
 
   const handleProblemsAdd = () => {
     if (selectedRowIds.length > 0) {
-      mutation.mutate({
-        groupId,
-        problemIds: selectedRowIds,
-      });
+      toast.promise(
+        mutation.mutateAsync({ groupId, problemIds: selectedRowIds }),
+        {
+          loading: "Adding problems...",
+          success: "Problems added successfully",
+          error: (err: AxiosError) => {
+            return errorFn(err);
+          },
+        }
+      );
     }
   };
 

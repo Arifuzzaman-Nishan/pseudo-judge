@@ -54,7 +54,6 @@ export default function PdfViewer({ url }: { url: string }) {
             file={url}
             onLoadSuccess={onDocumentLoadSuccess}
             options={options}
-            renderMode="svg"
           >
             {Array.from(new Array(numPages), (el, index) => (
               <Page

@@ -10,16 +10,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "../ui/button";
 import TableComponent from "../Shared/TableComponent";
 import { DateTime } from "luxon";
+import { Badge } from "../ui/badge";
+import { verdictColor } from "@/utils/helper";
+import CodeDialog from "../Shared/CodeDialog";
 
 const userTableHeader = [
   {
@@ -85,6 +86,20 @@ const columns: ColumnDef<UserTableType>[] = [
   {
     accessorKey: "status",
     header: "Status",
+    cell: ({ row }) => (
+      <Badge
+        className={`${
+          verdictColor[
+            (
+              row.getValue("status") as string
+            ).toLowerCase() as keyof typeof verdictColor
+          ]
+        } text-white`}
+        variant="outline"
+      >
+        {row.getValue("status")}
+      </Badge>
+    ),
   },
   {
     accessorKey: "createdAt",
@@ -95,14 +110,13 @@ const columns: ColumnDef<UserTableType>[] = [
     header: "Action",
     cell: ({ row }) => (
       <>
-        <Button>View Code</Button>
+        <CodeDialog data={row.original} />
       </>
     ),
   },
 ];
 
 const UserTable = ({ data }: { data: UserTableType[] }) => {
-  console.log("data is ", data.length);
   return <TableComponent columns={columns} data={data} />;
 };
 
@@ -141,7 +155,6 @@ const User = ({ username }: { username: string }) => {
   let userStatisticsTable = null;
 
   if (isSuccess) {
-    console.log("data totalSubmission is ", data.totalSubmissions);
     userProfile = (
       <>
         <div className="flex justify-center rounded-sm">

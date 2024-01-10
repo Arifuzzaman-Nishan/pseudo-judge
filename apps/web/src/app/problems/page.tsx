@@ -5,6 +5,13 @@ import React from "react";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { getAllProblemsOrGroupProblems } from "@/lib/tanstackQuery/api/problemsApi";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Problems | PseudoJudge",
+  description:
+    "PseudoJudge is a platform for competitive programming enthusiasts to practice and compete with others.",
+};
 
 export default async function ProblemsPage() {
   const cookieStore = cookies();

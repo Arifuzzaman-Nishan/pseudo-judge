@@ -60,14 +60,11 @@ export class ProblemService {
 
       return fileUrl;
     } catch (err: any) {
-      console.log('error is ', err.message);
       return null;
     }
   }
 
   async crawlProblems(dto: CrawlProblemsDto) {
-    // console.log('dto is ', dto);
-
     const { url, ojName } = dto;
     await this.puppeteerService.launch({
       headless: 'new',
@@ -100,7 +97,6 @@ export class ProblemService {
     await Promise.all(
       selectorData.map(async (item) => {
         if (item.key === 'problemDescriptionHTML') {
-          // console.log('item.key problemdescription is ', item.key);
           if (ojName === OJName.LOJ) {
             problemData[item.key] =
               await this.puppeteerService.getLightOjProblemDescription(
@@ -119,23 +115,11 @@ export class ProblemService {
       }),
     );
 
-    // if (ojName === OJName.UVA) {
-    //   const newUrl = `https://vjudge.net/problem/${ojName}-${problemData.ojProblemId}`;
-    //   await this.puppeteerService.goto(newUrl);
-
-    //   problemData['pdfUrl'] =
-    //     await this.puppeteerService.getDataFromHTMLSelector(
-    //       selectorData[0].selector,
-    //     );
-    // }
-
     await this.puppeteerService.close();
-    console.log('problem data is ', problemData);
 
     const { title, ojProblemId, ...problemDetailsData } = problemData;
 
     const newPdfUrl = await this.getPdfUrl(problemData.pdfUrl);
-    console.log('new pdf url is ', newPdfUrl);
 
     if (!newPdfUrl && ojName === OJName.UVA) {
       throw new HttpException(
@@ -155,8 +139,6 @@ export class ProblemService {
       ojProblemId,
       problemDetails: problemDetails,
     };
-
-    console.log('final problem data is ', finalProblemData);
 
     return this.problemRepository.create(finalProblemData);
   }
@@ -259,8 +241,6 @@ export class ProblemService {
         },
       ]);
     } else {
-      // console.log('userId is ', userId);
-
       const allProblems = await this.problemRepository.findAll({});
       groupsWithProblems = {
         _id: '',
@@ -274,10 +254,7 @@ export class ProblemService {
     }
 
     for (const problem of groupsWithProblems.problems) {
-      console.log('problem id is ', problem._id);
-
       const count = await this.totalSolvedCount(problem._id);
-      console.log('cont is ', count);
       problem.totalSolved = count?.totalSolved || 0;
       problem.totalSubmission = count?.totalSubmission || 0;
     }
@@ -286,8 +263,6 @@ export class ProblemService {
   }
 
   async findOne(problemId: string) {
-    console.log('problemId is ', problemId);
-
     const [problem] = await this.problemRepository.aggregate([
       {
         $match: {
@@ -368,8 +343,6 @@ export class ProblemService {
   async submitCode(dto: SubmitCodeDto) {
     const { userId, problemId, groupId } = dto;
 
-    console.log('submit code dto is ', dto);
-
     const user = await this.userRepository.findOne({
       _id: userId,
     });
@@ -395,9 +368,8 @@ export class ProblemService {
     }
 
     dto.codeStr = `// ${uuidv4()}\n${dto.codeStr}`;
-    console.log('dto is ', dto);
+
     await this.vjudgeService.login();
-    console.log('login is done');
     const codeSubmitRes = await this.vjudgeService.submitCode(dto);
 
     if (!codeSubmitRes?.runId) {
@@ -452,7 +424,6 @@ export class ProblemService {
       groupId: string;
     };
   }) {
-    console.log('query is ', query);
     const { problemId, groupId } = query;
 
     const user = await this.userRepository.findOne({
