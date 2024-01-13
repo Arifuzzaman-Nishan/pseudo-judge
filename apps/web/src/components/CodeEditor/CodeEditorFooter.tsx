@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { AxiosError } from "axios";
 import errorFn from "../Shared/Error";
 import { useTheme } from "next-themes";
-import CodeSubmitDialog from "../Shared/CodeDialog";
+import CodeSubmitDialog, { CodeSubmitDialogTable } from "../Shared/CodeDialog";
 
 const CodeEditorFooter = () => {
   const { theme } = useTheme();
@@ -178,7 +178,7 @@ const CodeEditorFooter = () => {
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           title="Code Submission"
-          content={<CodeSubmitDialog data={solutionCode} />}
+          content={<CodeSubmitDialogTable data={solutionCode} />}
         />
       </div>
     </>

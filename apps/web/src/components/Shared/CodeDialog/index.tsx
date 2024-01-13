@@ -43,7 +43,7 @@ const CodeHighlighter = ({ codeStr }: { codeStr: string }) => {
   );
 };
 
-const CodeSubmitDialogTable: FC<CodeSubmitDialogType> = ({ data }) => {
+export const CodeSubmitDialogTable: FC<CodeSubmitDialogType> = ({ data }) => {
   return (
     <>
       <div className="">
