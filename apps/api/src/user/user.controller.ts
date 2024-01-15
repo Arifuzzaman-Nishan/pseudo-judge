@@ -9,4 +9,9 @@ export class UserController {
   findOneByUsername(@Param('username') username: string) {
     return this.userService.findOneByUsername(username);
   }
+
+  @Get('rankings')
+  findRankings() {
+    return this.userService.findRankings();
+  }
 }

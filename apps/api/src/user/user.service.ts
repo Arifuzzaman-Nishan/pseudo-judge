@@ -239,4 +239,42 @@ export class UserService {
 
     return result[0];
   }
+
+  async findRankings() {
+    return this.userRepository.aggregate([
+      {
+        $match: {
+          role: { $ne: 'admin' },
+        },
+      },
+      {
+        $lookup: {
+          from: 'problemsubmissions',
+          localField: '_id',
+          foreignField: 'user',
+          as: 'submissions',
+        },
+      },
+      {
+        $project: {
+          username: 1,
+          fullName: 1,
+          solvedCount: {
+            $size: {
+              $filter: {
+                input: '$submissions',
+                as: 'submission',
+                cond: { $eq: ['$$submission.status', 'Accepted'] },
+              },
+            },
+          },
+        },
+      },
+      {
+        $sort: {
+          solvedCount: -1,
+        },
+      },
+    ]);
+  }
 }
