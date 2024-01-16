@@ -121,7 +121,7 @@ const TableComponent = <T extends { _id?: string }>({
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">{children}</div>
+      <div className="py-4">{children}</div>
       <div className="rounded-md border">
         <Table className="m-0">
           <TableHeader>

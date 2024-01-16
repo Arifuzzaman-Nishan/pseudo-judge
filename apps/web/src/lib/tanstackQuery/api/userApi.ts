@@ -20,6 +20,13 @@ type GetUserResponse = {
   };
 };
 
+export type GetRankingsResponse = {
+  _id: string;
+  fullName: string;
+  username: string;
+  solvedCount: number;
+};
+
 const userApi = {
   getUser: async (username: string): Promise<GetUserResponse> => {
     const response = await baseApi({
@@ -28,6 +35,13 @@ const userApi = {
     });
     return response.data;
   },
+  getUsersRankingQuery: async (): Promise<Array<GetRankingsResponse>> => {
+    const response = await baseApi({
+      method: "GET",
+      url: `/user/rankings`,
+    });
+    return response.data;
+  },
 };
 
-export const { getUser } = userApi;
+export const { getUser, getUsersRankingQuery } = userApi;
