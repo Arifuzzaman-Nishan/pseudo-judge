@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
-import Container from "../Shared/Container";
-import { useQuery } from "@tanstack/react-query";
 import {
   GetRankingsResponse,
   getUsersRankingQuery,
 } from "@/lib/tanstackQuery/api/userApi";
+import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import TableComponent from "../Shared/TableComponent";
+import { useState } from "react";
+import Container from "../Shared/Container";
 import Search from "../Shared/Search";
+import TableComponent from "../Shared/TableComponent";
 
 const columns: ColumnDef<GetRankingsResponse>[] = [
   {
