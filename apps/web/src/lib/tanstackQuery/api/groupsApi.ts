@@ -7,6 +7,12 @@ type CreateGroupType = {
   cutoffInterval: string;
 };
 
+type Cutoff = {
+  cutoffNumber: number;
+  cutoffInterval: string;
+  cutoffDate: string;
+};
+
 export type GetGroupsType = {
   index?: number;
   _id: string;
@@ -14,6 +20,7 @@ export type GetGroupsType = {
   enrollmentKey?: string;
   totalMembers: string;
   totalProblems: string;
+  cutoff: Cutoff;
   createdAt: string;
 };
 

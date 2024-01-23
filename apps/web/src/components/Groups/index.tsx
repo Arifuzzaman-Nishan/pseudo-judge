@@ -26,6 +26,7 @@ export const columns: ColumnDef<GetGroupsType>[] = [
       <div className="capitalize">{row.getValue("groupName")}</div>
     ),
   },
+
   {
     accessorKey: "totalMembers",
     header: "Total Members",
@@ -40,11 +41,32 @@ export const columns: ColumnDef<GetGroupsType>[] = [
       <div className="text-center w-24">{row.getValue("totalProblems")}</div>
     ),
   },
+  // {
+  //   accessorKey: "createdAt",
+  //   header: "Created Date",
+  //   cell: ({ row }) => (
+  //     <div>{timeStampsToDateTime(row.getValue("createdAt"))}</div>
+  //   ),
+  // },
   {
-    accessorKey: "createdAt",
-    header: "Created Date",
+    accessorKey: "cutoff.cutoffNumber",
+    header: "Cutoff Number",
     cell: ({ row }) => (
-      <div>{timeStampsToDateTime(row.getValue("createdAt"))}</div>
+      <div className="text-center w-24">
+        {row.original?.cutoff?.cutoffNumber}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "cutoff.cutoffInterval",
+    header: "Cutoff Interval",
+    cell: ({ row }) => <div>{row.original?.cutoff?.cutoffInterval}</div>,
+  },
+  {
+    accessorKey: "cutoff.cutoffDate",
+    header: "Cutoff Date",
+    cell: ({ row }) => (
+      <div>{timeStampsToDateTime(row.original?.cutoff?.cutoffDate)}</div>
     ),
   },
   {

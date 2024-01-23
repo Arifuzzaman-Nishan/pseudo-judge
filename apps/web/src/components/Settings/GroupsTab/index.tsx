@@ -14,7 +14,6 @@ const GroupsTab = () => {
         description="Enter the group name. Click save when you're done."
         content={<GroupsTabForm />}
       />
-
       <GroupsTabTable setIsOpen={setIsOpen} />
     </section>
   );

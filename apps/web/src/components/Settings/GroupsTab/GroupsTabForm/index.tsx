@@ -50,16 +50,16 @@ const GroupsTabForm = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof GroupFormSchema>) => {
-    console.log("form data is ", data);
-
     toast.promise(mutation.mutateAsync(data), {
       loading: "Creating Group...",
-      success: "Successfully Created Group",
+      success: () => {
+        form.reset();
+        return "Successfully Created Group";
+      },
       error: (err: AxiosError) => {
         return errorFn(err);
       },
     });
-    // form.reset();
   };
 
   return (

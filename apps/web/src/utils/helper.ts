@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 
 export const timeStampsToDateTime = (timeStamp: string) => {
-  const dateTime = DateTime.fromISO(timeStamp);
+  const dateTime = DateTime.fromISO(timeStamp).setZone("Asia/Dhaka");
   return dateTime.toFormat("dd/MM/yyyy");
 };
 

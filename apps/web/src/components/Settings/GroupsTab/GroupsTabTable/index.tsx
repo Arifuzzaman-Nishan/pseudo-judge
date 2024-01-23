@@ -11,6 +11,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import TableComponent from "@/components/Shared/TableComponent";
 import { Button } from "@/components/ui/button";
 import Clipboard from "@/components/Problem/Clipboard";
+import { timeStampsToDateTime } from "@/utils/helper";
 
 const columns: ColumnDef<GetGroupsType>[] = [
   {
@@ -33,6 +34,27 @@ const columns: ColumnDef<GetGroupsType>[] = [
         <div>{row.getValue("enrollmentKey")}</div>
         <Clipboard className="static" text={row.getValue("enrollmentKey")} />
       </div>
+    ),
+  },
+  {
+    accessorKey: "cutoff.cutoffNumber",
+    header: "Cutoff Number",
+    cell: ({ row }) => (
+      <div className="text-center w-24">
+        {row.original?.cutoff?.cutoffNumber}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "cutoff.cutoffInterval",
+    header: "Cutoff Interval",
+    cell: ({ row }) => <div>{row.original?.cutoff?.cutoffInterval}</div>,
+  },
+  {
+    accessorKey: "cutoff.cutoffDate",
+    header: "Cutoff Date",
+    cell: ({ row }) => (
+      <div>{timeStampsToDateTime(row.original?.cutoff?.cutoffDate)}</div>
     ),
   },
   {
