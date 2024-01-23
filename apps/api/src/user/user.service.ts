@@ -259,15 +259,39 @@ export class UserService {
         $project: {
           username: 1,
           fullName: 1,
-          solvedCount: {
-            $size: {
-              $filter: {
-                input: '$submissions',
-                as: 'submission',
-                cond: { $eq: ['$$submission.status', 'Accepted'] },
+          acceptedSubmissions: {
+            $filter: {
+              input: '$submissions',
+              as: 'submission',
+              cond: {
+                $regexMatch: {
+                  input: '$$submission.status',
+                  regex: /^accepted$/i,
+                },
               },
             },
           },
+        },
+      },
+      {
+        $unwind: {
+          path: '$acceptedSubmissions',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          username: { $first: '$username' },
+          fullName: { $first: '$fullName' },
+          uniqueProblemsSolved: { $addToSet: '$acceptedSubmissions.problem' },
+        },
+      },
+      {
+        $project: {
+          username: 1,
+          fullName: 1,
+          solvedCount: { $size: '$uniqueProblemsSolved' },
         },
       },
       {
@@ -278,3 +302,19 @@ export class UserService {
     ]);
   }
 }
+
+// {
+//   $project: {
+//     username: 1,
+//     fullName: 1,
+//     solvedCount: {
+//       $size: {
+//         $filter: {
+//           input: '$submissions',
+//           as: 'submission',
+//           cond: { $eq: ['$$submission.status', 'Accepted'] },
+//         },
+//       },
+//     },
+//   },
+// },

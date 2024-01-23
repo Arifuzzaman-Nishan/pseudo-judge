@@ -4,7 +4,7 @@ import { GroupHelperService } from './utils/groupHelper.service';
 import mongoose from 'mongoose';
 import { UserRole } from '@/user/user.schema';
 import { UserRepository } from '@/user/user.repository';
-import { CutoffInterval } from '@/cutoff/cutoff.schema';
+import { CutoffHelperService } from '@/cutoff/cutoffhelper.service';
 
 @Injectable()
 export class GroupService {
@@ -12,48 +12,25 @@ export class GroupService {
     private readonly groupRepository: GroupRepository,
     private readonly groupHelperService: GroupHelperService,
     private readonly userRepository: UserRepository,
+    private readonly cutoffHelperService: CutoffHelperService,
   ) {}
-
-  calculateCutoffDate(startDate: Date | string, interval: CutoffInterval) {
-    // Check if startDate is a string and convert it to a Date object
-    const date =
-      typeof startDate === 'string' ? new Date(startDate) : startDate;
-
-    if (isNaN(date.getTime())) {
-      throw new Error('Invalid start date');
-    }
-
-    const cutoffDate = new Date(date);
-
-    switch (interval) {
-      case CutoffInterval.WEEKLY:
-        // Add 7 days for weekly interval
-        cutoffDate.setDate(cutoffDate.getDate() + 7);
-        break;
-      case CutoffInterval.MONTHLY:
-        // Add 1 month for monthly interval
-        cutoffDate.setMonth(cutoffDate.getMonth() + 1);
-        break;
-      default:
-        throw new Error('Invalid cutoff interval');
-    }
-
-    return cutoffDate;
-  }
 
   async createGroup(dto: any) {
     const enrollmentKey = this.groupHelperService.generateEnrollmentKey();
 
     const { groupName, ...cutoff } = dto;
 
-    const cutoffDate = this.calculateCutoffDate(
-      cutoff.cutoffStartDate,
+    const currentDate = this.cutoffHelperService.getBangladeshTime().toJSDate();
+
+    const cutoffDate = this.cutoffHelperService.calculateNextCutoffDate(
+      currentDate,
       cutoff.cutoffInterval,
     );
 
     const cutoffObj = {
       ...cutoff,
       cutoffDate: cutoffDate,
+      initialCutoffNumber: cutoff.cutoffNumber,
     };
 
     const result = await this.groupRepository.create({
@@ -338,49 +315,27 @@ export class GroupService {
   }
 
   async findGroupNotAddedUsers(groupId: string) {
-    const users = await this.groupRepository.aggregate([
-      {
-        $match: {
-          _id: new mongoose.Types.ObjectId(groupId),
-        },
-      },
+    console.log('groupId', groupId);
+    const users = await this.userRepository.aggregate([
       {
         $lookup: {
-          from: 'users',
-          let: { userIds: '$users' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    {
-                      $not: {
-                        $in: ['$_id', '$$userIds'],
-                      },
-                    },
-                    {
-                      $ne: ['$role', UserRole.ADMIN],
-                    },
-                  ],
-                },
-              },
-            },
-          ],
-          as: 'users',
+          from: 'groups',
+          localField: '_id',
+          foreignField: 'users',
+          as: 'groupMembership',
         },
       },
       {
-        $unwind: {
-          path: '$users',
+        $match: {
+          groupMembership: { $size: 0 },
+          role: { $ne: UserRole.ADMIN },
         },
       },
       {
         $project: {
-          'users.password': 0,
+          password: 0,
+          groupMembership: 0,
         },
-      },
-      {
-        $replaceRoot: { newRoot: '$users' },
       },
     ]);
 

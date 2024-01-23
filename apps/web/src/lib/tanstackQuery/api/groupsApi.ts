@@ -5,8 +5,6 @@ type CreateGroupType = {
   groupName: string;
   cutoffNumber: number;
   cutoffInterval: string;
-  cutoffStartDate: Date;
-  //   groupDescription: string;
 };
 
 export type GetGroupsType = {

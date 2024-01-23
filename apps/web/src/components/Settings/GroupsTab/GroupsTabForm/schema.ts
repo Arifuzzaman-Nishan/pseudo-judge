@@ -10,9 +10,6 @@ export const GroupFormSchema = z.object({
   cutoffInterval: z.string({
     required_error: "Cutoff interval is required",
   }),
-  cutoffStartDate: z.date({
-    required_error: "Cutoff start date is required",
-  }),
 });
 
 export type GroupFormFieldTypes = keyof z.infer<typeof GroupFormSchema>;

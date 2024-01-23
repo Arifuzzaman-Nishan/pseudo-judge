@@ -31,13 +31,11 @@ export const groupFromField = [
         label: "Monthly",
         value: "monthly",
       },
+      {
+        key: 3,
+        label: "Everyday",
+        value: "everyday",
+      },
     ],
   },
-  // {
-  //   key: 4,
-  //   name: "cutoffStartDate",
-  //   label: "Cutoff Start Date",
-  //   placeholder: "Enter the group cutoff start date",
-  //   type: "date",
-  // },
 ];

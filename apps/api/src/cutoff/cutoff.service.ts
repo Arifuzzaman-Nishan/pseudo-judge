@@ -1,21 +1,19 @@
 import { GroupRepository } from '@/group/group.repository';
 import { ProblemSubmissionRepository } from '@/problem/repositories/problemSubmission.repository';
-import { Logger } from '@nestjs/common';
-// import { Cron } from '@nestjs/schedule';
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { DateTime } from 'luxon';
 import mongoose from 'mongoose';
-
+import { CutoffHelperService } from './cutoffhelper.service';
+@Injectable()
 export class CutoffService {
   constructor(
     private readonly groupRepository: GroupRepository,
     private readonly problemSubmissionRepository: ProblemSubmissionRepository,
+    private readonly cutoffHelperService: CutoffHelperService,
   ) {}
 
   private readonly logger = new Logger(CutoffService.name);
-
-  getBangladeshTime() {
-    return DateTime.utc().plus({ hours: 6 });
-  }
 
   async countAcceptedSumissionsSince(userId: string, groupId: string) {
     const result = await this.problemSubmissionRepository.aggregate([
@@ -23,7 +21,14 @@ export class CutoffService {
         $match: {
           user: new mongoose.Types.ObjectId(userId),
           group: new mongoose.Types.ObjectId(groupId),
-          status: 'accepted',
+          status: {
+            $regex: /^accepted$/i,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: '$problem',
         },
       },
       {
@@ -35,24 +40,13 @@ export class CutoffService {
       : 0;
   }
 
-  private calculateNextCutoffDate(
-    currentDate: Date,
-    interval: string,
-  ): DateTime {
-    const date = DateTime.fromJSDate(currentDate);
-    switch (interval) {
-      case 'weekly':
-        return date.plus({ weeks: 1 });
-      case 'monthly':
-        return date.plus({ months: 1 });
-      default:
-        throw new Error('Invalid cutoff interval');
-    }
-  }
-
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
+    timeZone: 'Asia/Dhaka',
+  })
   async handleCutoff() {
-    this.logger.debug('Called when the current second is 45');
-    const today = this.getBangladeshTime();
+    this.logger.debug('Called this every day at midnight');
+
+    const today = this.cutoffHelperService.getBangladeshTime();
     const groups = await this.groupRepository.findAll({});
 
     for (const group of groups) {
@@ -68,6 +62,8 @@ export class CutoffService {
             group._id as unknown as string,
           );
 
+          console.log('user solved count is ', solvedCount, userId);
+
           if (solvedCount < group.cutoff.cutoffNumber) {
             usersToRemove.push(userId);
           }
@@ -76,10 +72,12 @@ export class CutoffService {
           (userId) => !usersToRemove.includes(userId),
         );
 
-        group.cutoff.cutoffDate = this.calculateNextCutoffDate(
-          group.cutoff.cutoffDate,
-          group.cutoff.cutoffInterval,
-        ).toJSDate();
+        group.cutoff.cutoffDate = this.cutoffHelperService
+          .calculateNextCutoffDate(
+            group.cutoff.cutoffDate,
+            group.cutoff.cutoffInterval,
+          )
+          .toJSDate();
 
         group.cutoff.cutoffNumber += group.cutoff.initialCutoffNumber;
 
@@ -92,6 +90,4 @@ export class CutoffService {
       }
     }
   }
-
-  //   @Cron('45 * * * * *')
 }

@@ -3,6 +3,7 @@ import { Prop, Schema } from '@nestjs/mongoose';
 export enum CutoffInterval {
   WEEKLY = 'weekly',
   MONTHLY = 'monthly',
+  EVERYDAY = 'everyday',
 }
 
 @Schema({
