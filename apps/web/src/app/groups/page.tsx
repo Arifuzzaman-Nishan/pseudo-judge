@@ -12,10 +12,15 @@ export const metadata: Metadata = {
 };
 
 export default async function GroupsPage() {
+  const search = "";
   const queryClient = getQueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ["groups"],
-    queryFn: () => getGroupsQuery(false),
+    queryKey: ["groups", search],
+    queryFn: () =>
+      getGroupsQuery({
+        enrollmentKey: false,
+        search: search,
+      }),
   });
 
   return (

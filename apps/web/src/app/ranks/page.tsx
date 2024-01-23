@@ -5,10 +5,14 @@ import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { getUsersRankingQuery } from "@/lib/tanstackQuery/api/userApi";
 
 export default async function RanksPage() {
+  const search = "";
   const queryClient = getQueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ["usersRanking"],
-    queryFn: getUsersRankingQuery,
+    queryKey: ["usersRanking", search],
+    queryFn: () =>
+      getUsersRankingQuery({
+        search: search,
+      }),
   });
 
   return (

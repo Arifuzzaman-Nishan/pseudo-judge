@@ -31,10 +31,15 @@ export default async function ProblemsPage() {
     userId = typeof userInfo === "object" ? (userInfo as any)?.userId : "";
   }
 
+  const search = "";
   const queryClient = getQueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ["group", "problems", userId],
-    queryFn: () => getAllProblemsOrGroupProblems(userId),
+    queryKey: ["group", "problems", userId, search],
+    queryFn: () =>
+      getAllProblemsOrGroupProblems({
+        userId,
+        search,
+      }),
   });
 
   return (

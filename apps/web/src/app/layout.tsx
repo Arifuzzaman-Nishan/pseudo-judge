@@ -7,7 +7,12 @@ import TanstackProvider from "@/lib/tanstackQuery/utils/TanstackProvider";
 import Layout from "@/components/Shared/Layout";
 import ReduxProvider from "@/lib/redux/provider";
 import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "@/components/Shared/ThemeProvider";
+// import { ThemeProvider } from "@/components/Shared/ThemeProvider";
+import dynamic from "next/dynamic";
+
+const ThemeProvider = dynamic(
+  () => import("@/components/Shared/ThemeProvider")
+);
 
 const outfit = Outfit({ subsets: ["latin"] });
 
