@@ -1,3 +1,4 @@
+import { Cutoff } from '@/cutoff/cutoff.schema';
 import { Problem } from '@/problem/schemas/problem.schema';
 import { User } from '@/user/user.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
@@ -14,6 +15,11 @@ export class Group {
     unique: true,
   })
   groupName: string;
+
+  @Prop({
+    required: true,
+  })
+  cutoff: Cutoff;
 
   @Prop({
     required: true,

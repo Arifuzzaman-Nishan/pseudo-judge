@@ -7,6 +7,7 @@ import { GroupModule } from './group/group.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import path from 'path';
+import { CutoffModule } from './cutoff/cutoff.module';
 
 const APP_FILTER = 'APP_FILTER';
 @Module({
@@ -23,6 +24,7 @@ const APP_FILTER = 'APP_FILTER';
     UserModule,
     ProblemsModule,
     GroupModule,
+    CutoffModule,
   ],
   controllers: [],
   providers: [

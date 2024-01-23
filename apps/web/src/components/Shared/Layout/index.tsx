@@ -1,6 +1,6 @@
-import React, { ReactNode } from "react";
-import Header from "../Header";
 import dynamic from "next/dynamic";
+import { ReactNode } from "react";
+import Header from "../Header";
 
 const Progress = dynamic(() => import("../Progress"), { ssr: false });
 

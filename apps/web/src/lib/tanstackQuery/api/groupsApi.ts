@@ -3,6 +3,9 @@ import { ProblemsType } from "./problemsApi";
 
 type CreateGroupType = {
   groupName: string;
+  cutoffNumber: number;
+  cutoffInterval: string;
+  cutoffStartDate: Date;
   //   groupDescription: string;
 };
 

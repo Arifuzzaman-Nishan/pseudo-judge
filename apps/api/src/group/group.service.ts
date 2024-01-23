@@ -4,6 +4,7 @@ import { GroupHelperService } from './utils/groupHelper.service';
 import mongoose from 'mongoose';
 import { UserRole } from '@/user/user.schema';
 import { UserRepository } from '@/user/user.repository';
+import { CutoffInterval } from '@/cutoff/cutoff.schema';
 
 @Injectable()
 export class GroupService {
@@ -13,11 +14,51 @@ export class GroupService {
     private readonly userRepository: UserRepository,
   ) {}
 
+  calculateCutoffDate(startDate: Date | string, interval: CutoffInterval) {
+    // Check if startDate is a string and convert it to a Date object
+    const date =
+      typeof startDate === 'string' ? new Date(startDate) : startDate;
+
+    if (isNaN(date.getTime())) {
+      throw new Error('Invalid start date');
+    }
+
+    const cutoffDate = new Date(date);
+
+    switch (interval) {
+      case CutoffInterval.WEEKLY:
+        // Add 7 days for weekly interval
+        cutoffDate.setDate(cutoffDate.getDate() + 7);
+        break;
+      case CutoffInterval.MONTHLY:
+        // Add 1 month for monthly interval
+        cutoffDate.setMonth(cutoffDate.getMonth() + 1);
+        break;
+      default:
+        throw new Error('Invalid cutoff interval');
+    }
+
+    return cutoffDate;
+  }
+
   async createGroup(dto: any) {
     const enrollmentKey = this.groupHelperService.generateEnrollmentKey();
 
+    const { groupName, ...cutoff } = dto;
+
+    const cutoffDate = this.calculateCutoffDate(
+      cutoff.cutoffStartDate,
+      cutoff.cutoffInterval,
+    );
+
+    const cutoffObj = {
+      ...cutoff,
+      cutoffDate: cutoffDate,
+    };
+
     const result = await this.groupRepository.create({
-      ...dto,
+      groupName: groupName,
+      cutoff: cutoffObj,
       enrollmentKey: enrollmentKey,
     });
     return result;

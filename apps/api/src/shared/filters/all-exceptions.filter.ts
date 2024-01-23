@@ -80,7 +80,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       errorMessage = this.environment() ? message : name;
       stack = exception.stack;
     } else {
-      this.logger.error('other exception...');
+      this.logger.error('other exception...', exception.toString());
 
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       errorMessage = 'Critical Internal Server Error';
