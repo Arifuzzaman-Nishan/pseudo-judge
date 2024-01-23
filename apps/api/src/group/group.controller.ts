@@ -20,8 +20,11 @@ export class GroupController {
   }
 
   @Get('findall')
-  findAll(@Query('enrollmentKey', ParseBoolPipe) enrollmentKey: boolean) {
-    return this.groupService.findAllGroups(enrollmentKey);
+  findAll(
+    @Query('enrollmentKey', ParseBoolPipe) enrollmentKey: boolean,
+    @Query('search') search: string,
+  ) {
+    return this.groupService.findAllGroups(enrollmentKey, search);
   }
 
   @Get('findone/:id')

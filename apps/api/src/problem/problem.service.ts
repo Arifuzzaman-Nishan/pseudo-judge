@@ -186,7 +186,7 @@ export class ProblemService {
     return { totalSubmission, totalSolved };
   }
 
-  async findAllProblemsOrGroupProblems(userId: string) {
+  async findAllProblemsOrGroupProblems(userId: string, search: string) {
     let groupsWithProblems = null;
 
     const group = await this.groupRepository.findOne({
@@ -198,6 +198,13 @@ export class ProblemService {
     // Check if group is not null before calling toObject
     const groupObject = group ? group.toObject() : null;
     const isUserInGroup = groupObject != null;
+
+    const searchQuery = {};
+    if (search && !isUserInGroup) {
+      searchQuery['title'] = { $regex: search, $options: 'i' };
+    } else if (search && isUserInGroup) {
+      searchQuery['groupProblems.title'] = { $regex: search, $options: 'i' };
+    }
 
     if (userId && isUserInGroup) {
       [groupsWithProblems] = await this.groupRepository.aggregate<{
@@ -227,6 +234,9 @@ export class ProblemService {
           },
         },
         {
+          $match: searchQuery,
+        },
+        {
           $project: {
             'groupProblems.problemDetails': 0,
             'groupProblems.__v': 0,
@@ -241,7 +251,7 @@ export class ProblemService {
         },
       ]);
     } else {
-      const allProblems = await this.problemRepository.findAll({});
+      const allProblems = await this.problemRepository.findAll(searchQuery);
       groupsWithProblems = {
         _id: '',
         groupName: '',

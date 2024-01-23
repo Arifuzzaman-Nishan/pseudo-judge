@@ -11,48 +11,56 @@ import { useState } from "react";
 import Container from "../Shared/Container";
 import Search from "../Shared/Search";
 import TableComponent from "../Shared/TableComponent";
-
-const columns: ColumnDef<GetRankingsResponse>[] = [
-  {
-    accessorKey: "index",
-    header: "SI No.",
-    cell: ({ row }) => <div>{row.index + 1}</div>,
-  },
-  {
-    accessorKey: "username",
-    header: "User Name",
-    cell: ({ row }) => (
-      <div>
-        <Link
-          href={`/user/${row.getValue("username")}`}
-          className="capitalize text-blue-400 hover:text-blue-500"
-        >
-          {row.getValue("username")}
-        </Link>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "fullName",
-    header: "Full Name",
-  },
-  {
-    accessorKey: "solvedCount",
-    header: "Solved Count",
-  },
-];
+import Highlighter from "react-highlight-words";
 
 const Ranks = () => {
-  const { data, isSuccess, isError, isLoading } = useQuery({
-    queryKey: ["usersRanking"],
-    queryFn: getUsersRankingQuery,
-  });
-
   const [searchValue, setSearchValue] = useState<string>("");
+
+  const columns: ColumnDef<GetRankingsResponse>[] = [
+    {
+      accessorKey: "index",
+      header: "SI No.",
+      cell: ({ row }) => <div>{row.index + 1}</div>,
+    },
+    {
+      accessorKey: "username",
+      header: "User Name",
+      cell: ({ row }) => (
+        <div>
+          <Link
+            href={`/user/${row.getValue("username")}`}
+            className="capitalize text-blue-400 hover:text-blue-500"
+          >
+            <Highlighter
+              highlightClassName="text_highlighter"
+              searchWords={[searchValue]}
+              autoEscape={true}
+              textToHighlight={row.getValue("username")}
+            />
+          </Link>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "fullName",
+      header: "Full Name",
+    },
+    {
+      accessorKey: "solvedCount",
+      header: "Solved Count",
+    },
+  ];
+
+  const { data, isSuccess, isError, isLoading } = useQuery({
+    queryKey: ["usersRanking", searchValue],
+    queryFn: () => getUsersRankingQuery({ search: searchValue }),
+  });
 
   return (
     <Container>
-      <h1>Hello from Ranks page...</h1>
+      <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+        Rankings
+      </h2>
       <TableComponent columns={columns} data={data || []} isLoading={isLoading}>
         <div>
           <Search

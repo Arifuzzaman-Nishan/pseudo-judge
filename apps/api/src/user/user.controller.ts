@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -11,7 +11,7 @@ export class UserController {
   }
 
   @Get('rankings')
-  findRankings() {
-    return this.userService.findRankings();
+  findRankings(@Query('search') search: string) {
+    return this.userService.findRankings(search);
   }
 }

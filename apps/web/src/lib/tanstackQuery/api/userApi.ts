@@ -35,10 +35,18 @@ const userApi = {
     });
     return response.data;
   },
-  getUsersRankingQuery: async (): Promise<Array<GetRankingsResponse>> => {
+  getUsersRankingQuery: async ({
+    search,
+  }: {
+    search: string;
+  }): Promise<Array<GetRankingsResponse>> => {
+    let url = `/user/rankings`;
+    if (search) {
+      url += `?search=${search}`;
+    }
     const response = await baseApi({
       method: "GET",
-      url: `/user/rankings`,
+      url: url,
     });
     return response.data;
   },

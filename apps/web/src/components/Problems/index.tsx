@@ -5,7 +5,6 @@ import {
   getAllProblemsOrGroupProblems,
 } from "@/lib/tanstackQuery/api/problemsApi";
 import { useQuery } from "@tanstack/react-query";
-import * as React from "react";
 
 import Container from "@/components/Shared/Container";
 import { ColumnDef } from "@tanstack/react-table";
@@ -13,11 +12,20 @@ import TableComponent from "../Shared/TableComponent";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
+import Search from "../Shared/Search";
+import { useState } from "react";
+import Highlighter from "react-highlight-words";
 
 const Problems = ({ userId }: { userId: string }) => {
+  const [searchValue, setSearchValue] = useState<string>("");
+
   const { data, isLoading } = useQuery({
-    queryKey: ["group", "problems", userId],
-    queryFn: () => getAllProblemsOrGroupProblems(userId),
+    queryKey: ["group", "problems", userId, searchValue],
+    queryFn: () =>
+      getAllProblemsOrGroupProblems({
+        userId,
+        search: searchValue,
+      }),
     // enabled: !!userId,
   });
 
@@ -31,7 +39,14 @@ const Problems = ({ userId }: { userId: string }) => {
       accessorKey: "title",
       header: "Problem Title",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("title")}</div>
+        <div className="capitalize">
+          <Highlighter
+            highlightClassName="text_highlighter"
+            searchWords={[searchValue]}
+            autoEscape={true}
+            textToHighlight={row.getValue("title")}
+          />
+        </div>
       ),
     },
     {
@@ -92,7 +107,15 @@ const Problems = ({ userId }: { userId: string }) => {
           isLoading={isLoading}
           columns={columns}
           data={data?.problems || []}
-        />
+        >
+          <div>
+            <Search
+              value={searchValue}
+              setValue={setSearchValue}
+              placeholder="Search for Problem Title"
+            />
+          </div>
+        </TableComponent>
       </div>
     </Container>
   );

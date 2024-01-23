@@ -58,11 +58,19 @@ const groupsApi = {
     });
     return response.data;
   },
-  getGroupsQuery: async (
-    enrollmentKey = true
-  ): Promise<Array<GetGroupsType>> => {
+  getGroupsQuery: async ({
+    enrollmentKey,
+    search,
+  }: {
+    enrollmentKey: boolean;
+    search: string;
+  }): Promise<Array<GetGroupsType>> => {
+    let url = `/group/findall?enrollmentKey=${enrollmentKey}`;
+    if (search) {
+      url += `&search=${search}`;
+    }
     const response = await baseApi({
-      url: `/group/findall?enrollmentKey=${enrollmentKey}`,
+      url: url,
       method: "GET",
     });
     return response.data;

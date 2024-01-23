@@ -92,11 +92,19 @@ const problemsApi = {
     });
     return response.data;
   },
-  getAllProblemsOrGroupProblems: async (
-    userId?: string
-  ): Promise<GetAllProblemsOrGroupProblemsReturnType> => {
+  getAllProblemsOrGroupProblems: async ({
+    userId,
+    search,
+  }: {
+    userId: string;
+    search: string;
+  }): Promise<GetAllProblemsOrGroupProblemsReturnType> => {
     let url = "/problem/findAllProblemsOrGroupProblems";
-    if (userId) url += `?userId=${userId}`;
+
+    if (userId && !search) url += `?userId=${userId}`;
+    else if (!userId && search) url += `?search=${search}`;
+    else if (userId && search) url += `?userId=${userId}&search=${search}`;
+
     const response = await baseApi({
       url: url,
       method: "GET",

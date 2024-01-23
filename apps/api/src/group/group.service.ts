@@ -41,9 +41,21 @@ export class GroupService {
     return result;
   }
 
-  async findAllGroups(enrollmentKey: boolean) {
+  async findAllGroups(enrollmentKey: boolean, search: string) {
+    const searchQuery = {};
+    if (search) {
+      searchQuery['groupName'] = {
+        $regex: new RegExp(search, 'i'),
+      };
+    }
+
+    console.log('searchQuery is ', searchQuery);
+
     if (enrollmentKey) {
       return this.groupRepository.aggregate([
+        {
+          $match: searchQuery,
+        },
         {
           $addFields: {
             totalMembers: {
@@ -61,6 +73,9 @@ export class GroupService {
       ]);
     } else {
       return this.groupRepository.aggregate([
+        {
+          $match: searchQuery,
+        },
         {
           $addFields: {
             totalMembers: {

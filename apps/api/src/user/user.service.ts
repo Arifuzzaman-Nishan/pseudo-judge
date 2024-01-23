@@ -240,12 +240,24 @@ export class UserService {
     return result[0];
   }
 
-  async findRankings() {
+  async findRankings(search: string) {
+    let searchQuery: {
+      role: { $ne: string };
+      username?: { $regex: string; $options: string };
+    } = {
+      role: { $ne: 'admin' },
+    };
+
+    if (search) {
+      searchQuery = {
+        ...searchQuery,
+        username: { $regex: search, $options: 'i' },
+      };
+    }
+
     return this.userRepository.aggregate([
       {
-        $match: {
-          role: { $ne: 'admin' },
-        },
+        $match: searchQuery,
       },
       {
         $lookup: {
@@ -302,19 +314,3 @@ export class UserService {
     ]);
   }
 }
-
-// {
-//   $project: {
-//     username: 1,
-//     fullName: 1,
-//     solvedCount: {
-//       $size: {
-//         $filter: {
-//           input: '$submissions',
-//           as: 'submission',
-//           cond: { $eq: ['$$submission.status', 'Accepted'] },
-//         },
-//       },
-//     },
-//   },
-// },
