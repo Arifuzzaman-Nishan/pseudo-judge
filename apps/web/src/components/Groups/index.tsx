@@ -14,6 +14,8 @@ import EnrollDialog from "./Enrollment/EnrollmentDialog";
 import { timeStampsToDateTime } from "@/utils/helper";
 import Search from "../Shared/Search";
 import Highlighter from "react-highlight-words";
+import { useSelector } from "@/lib/redux";
+import { selectAuth } from "@/lib/redux/slices/authSlice";
 
 const Groups = () => {
   const [searchValue, setSearchValue] = useState<string>("");
@@ -94,6 +96,8 @@ const Groups = () => {
         search: searchValue,
       }),
   });
+
+  const auth = useSelector(selectAuth);
 
   return (
     <Container>
