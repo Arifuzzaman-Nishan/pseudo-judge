@@ -42,16 +42,10 @@ const EnrollDialog = ({ groupId }: { groupId: string }) => {
         title="Enroll"
         description="Enroll this group by using enrollment key"
         content={<EnrollForm groupId={groupId} />}
-        footer={
-          <div className="flex items-center justify-end space-x-2 py-4">
-            <Button variant="secondary" onClick={() => setIsOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={() => setIsOpen(false)}>Enroll</Button>
-          </div>
-        }
       />
-      <Button onClick={handleEnroll}>Enroll</Button>
+      <Button disabled={auth.isUserInGroup} onClick={handleEnroll}>
+        Enroll
+      </Button>
     </>
   );
 };

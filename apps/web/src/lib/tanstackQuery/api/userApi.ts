@@ -50,6 +50,13 @@ const userApi = {
     });
     return response.data;
   },
+  getAcceptedProblems: async (userId: string): Promise<Array<string>> => {
+    const response = await baseApi({
+      method: "GET",
+      url: `/user/findAcceptedProblems/${userId}`,
+    });
+    return response.data;
+  },
 };
 
-export const { getUser, getUsersRankingQuery } = userApi;
+export const { getUser, getUsersRankingQuery, getAcceptedProblems } = userApi;

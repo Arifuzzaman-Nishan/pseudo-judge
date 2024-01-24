@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import CodeMirror, { type ViewUpdate } from "@uiw/react-codemirror";
 import { loadLanguage } from "@uiw/codemirror-extensions-langs";
 import { EditorView } from "@codemirror/view";
@@ -14,6 +14,14 @@ const CodeEditor = () => {
   const dispatch = useDispatch();
   const state = useSelector(selectCode);
   const { theme } = useTheme();
+
+  const grammerlyRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {}, []);
+
+  useEffect(() => {
+    dispatch(codeSlice.actions.setEmpty());
+  }, [dispatch]);
 
   const onChange = useCallback(
     (val: string, viewUpdate: ViewUpdate) => {
@@ -44,6 +52,9 @@ const CodeEditor = () => {
             syntaxHighlighting: true,
           }}
           theme={theme === "light" ? githubLight : githubDark}
+          // data-gramm={false}
+          // data-gramm_editor={false}
+          // data-enable-grammarly={false}
         />
         <CodeEditorFooter />
       </section>

@@ -14,4 +14,9 @@ export class UserController {
   findRankings(@Query('search') search: string) {
     return this.userService.findRankings(search);
   }
+
+  @Get('findAcceptedProblems/:userId')
+  findAcceptedProblems(@Param('userId') userId: string) {
+    return this.userService.findUserAcceptedSubmissions(userId);
+  }
 }

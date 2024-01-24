@@ -102,3 +102,9 @@
 .Example__container__document .react-pdf__message {
   padding: 20px;
 }
+
+[contenteditable] ~ grammarly-extension,
+input ~ grammarly-extension,
+textarea ~ grammarly-extension {
+  display: none;
+}

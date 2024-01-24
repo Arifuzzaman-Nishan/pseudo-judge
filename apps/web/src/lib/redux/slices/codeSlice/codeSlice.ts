@@ -38,11 +38,7 @@ export const codeSlice = createSlice({
       state.problemId = action.payload;
     },
     setEmpty(state) {
-      // state.codeStr = "";
-      // state.lang = ;
-      // state.ojName = "";
-      // state.ojProblemId = "";
-      // state.problemId = "";
+      Object.assign(state, initialState);
     },
   },
 });

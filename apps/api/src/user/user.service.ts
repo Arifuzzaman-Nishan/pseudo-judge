@@ -313,4 +313,31 @@ export class UserService {
       },
     ]);
   }
+
+  async findUserAcceptedSubmissions(userId: string) {
+    const results = await this.problemSubmissionRepository.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(userId),
+          status: new RegExp('^Accepted$', 'i'),
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          problemIds: {
+            $addToSet: '$problem',
+          },
+        },
+      },
+      // {
+      //   $project: {
+      //     _id: 0,
+      //     problemIds: 1,
+      //   },
+      // },
+    ]);
+
+    return results.length > 0 ? (results[0] as any).problemIds : [];
+  }
 }

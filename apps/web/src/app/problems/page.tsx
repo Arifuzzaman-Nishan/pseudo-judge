@@ -5,6 +5,7 @@ import React from "react";
 import { cookies } from "next/headers";
 import { getAllProblemsOrGroupProblems } from "@/lib/tanstackQuery/api/problemsApi";
 import { Metadata } from "next";
+import { getAcceptedProblems } from "@/lib/tanstackQuery/api/userApi";
 
 export const metadata: Metadata = {
   title: "Problems | PseudoJudge",
@@ -40,6 +41,11 @@ export default async function ProblemsPage() {
         userId,
         search,
       }),
+  });
+
+  await queryClient.prefetchQuery({
+    queryKey: ["acceptedProblems", userId],
+    queryFn: () => getAcceptedProblems(userId),
   });
 
   return (

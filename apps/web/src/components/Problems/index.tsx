@@ -15,6 +15,8 @@ import { Badge } from "../ui/badge";
 import Search from "../Shared/Search";
 import { useState } from "react";
 import Highlighter from "react-highlight-words";
+import { getAcceptedProblems } from "@/lib/tanstackQuery/api/userApi";
+import { CheckCircleIcon } from "@heroicons/react/24/solid";
 
 const Problems = ({ userId }: { userId: string }) => {
   const [searchValue, setSearchValue] = useState<string>("");
@@ -27,6 +29,11 @@ const Problems = ({ userId }: { userId: string }) => {
         search: searchValue,
       }),
     // enabled: !!userId,
+  });
+
+  const { data: acceptedProblems } = useQuery({
+    queryKey: ["acceptedProblems", userId],
+    queryFn: () => getAcceptedProblems(userId),
   });
 
   const columns: ColumnDef<ProblemsType>[] = [
@@ -88,7 +95,18 @@ const Problems = ({ userId }: { userId: string }) => {
       cell: ({ row }) => (
         <>
           <Link href={`/problem/${row.original._id}`}>
-            <Button variant="outline">Solve</Button>
+            {acceptedProblems?.includes(row.original._id) ? (
+              <Button variant="outline" className="min-w-24 ">
+                <p>Solved</p>
+                <span className="w-full text-left">
+                  <CheckCircleIcon className="ml-1 text-green-500" />
+                </span>
+              </Button>
+            ) : (
+              <Button className="min-w-24 text-left" variant="outline">
+                Solve
+              </Button>
+            )}
           </Link>
         </>
       ),
