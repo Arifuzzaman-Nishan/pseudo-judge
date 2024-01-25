@@ -82,6 +82,7 @@ export type GetAllProblemsOrGroupProblemsReturnType = {
   _id: string;
   groupName: string;
   problems: ProblemsType[];
+  cutoffNotice: string;
 };
 
 const problemsApi = {

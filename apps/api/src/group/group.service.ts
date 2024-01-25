@@ -27,10 +27,16 @@ export class GroupService {
       cutoff.cutoffInterval,
     );
 
+    const cutoffNotice = this.cutoffHelperService.generateCutoffNotice(
+      cutoff.cutoffNumber,
+      cutoffDate,
+    );
+
     const cutoffObj = {
       ...cutoff,
       cutoffDate: cutoffDate,
       initialCutoffNumber: cutoff.cutoffNumber,
+      cutoffNotice,
     };
 
     const result = await this.groupRepository.create({

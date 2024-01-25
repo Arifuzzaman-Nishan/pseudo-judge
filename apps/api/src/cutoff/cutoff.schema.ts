@@ -31,4 +31,9 @@ export class Cutoff {
     required: true,
   })
   cutoffDate: Date;
+
+  @Prop({
+    required: true,
+  })
+  cutoffNotice: string;
 }

@@ -16,6 +16,6 @@ import { CutoffModule } from '@/cutoff/cutoff.module';
   ],
   controllers: [GroupController],
   providers: [GroupService, GroupRepository, GroupHelperService],
-  exports: [GroupRepository],
+  exports: [GroupRepository, GroupHelperService],
 })
 export class GroupModule {}

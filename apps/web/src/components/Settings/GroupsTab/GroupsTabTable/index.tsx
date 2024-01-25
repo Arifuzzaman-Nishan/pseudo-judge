@@ -92,7 +92,11 @@ const GroupsTabTable = ({
 }) => {
   const { isLoading, data, isSuccess } = useQuery({
     queryKey: ["groups"],
-    queryFn: () => getGroupsQuery(),
+    queryFn: () =>
+      getGroupsQuery({
+        enrollmentKey: true,
+        search: "",
+      }),
   });
 
   return (

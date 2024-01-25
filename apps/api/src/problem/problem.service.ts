@@ -246,6 +246,7 @@ export class ProblemService {
           $group: {
             _id: '$_id',
             groupName: { $first: '$groupName' },
+            cutoffNotice: { $first: '$cutoff.cutoffNotice' },
             problems: { $push: '$groupProblems' },
           },
         },

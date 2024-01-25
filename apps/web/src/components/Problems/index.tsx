@@ -17,10 +17,18 @@ import { useState } from "react";
 import Highlighter from "react-highlight-words";
 import { getAcceptedProblems } from "@/lib/tanstackQuery/api/userApi";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import { useSelector } from "@/lib/redux";
+import { selectAuth } from "@/lib/redux/slices/authSlice";
 
-const AnnoucementBar = () => {
+const AnnoucementBar = ({
+  groupName,
+  cutoffNotice,
+}: {
+  groupName: string;
+  cutoffNotice: string;
+}) => {
   return (
-    <div className="relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 px-6 py-2.5 sm:px-3.5  justify-center">
+    <div className="relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 px-6 py-2.5 sm:px-3.5  justify-center mb-5">
       <div
         className="absolute left-[max(-7rem,calc(50%-52rem))] top-1/2 -z-10 -translate-y-1/2 transform-gpu blur-2xl"
         aria-hidden="true"
@@ -47,7 +55,9 @@ const AnnoucementBar = () => {
       </div>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <p className="text-sm leading-6 text-gray-900">
-          <strong className="font-semibold">Notice Group-1 Cutoff</strong>
+          <strong className="font-semibold">
+            Notice <span className="capitalize">{groupName}</span> Cutoff
+          </strong>
           <svg
             viewBox="0 0 2 2"
             className="mx-2 inline h-0.5 w-0.5 fill-current"
@@ -55,10 +65,7 @@ const AnnoucementBar = () => {
           >
             <circle cx="1" cy="1" r="1" />
           </svg>
-          <span>
-            Those with {"<"} 280 problems solved on 30th july 2024 will be
-            removed from this groups
-          </span>
+          <span>{cutoffNotice}</span>
         </p>
         {/* <a
           href="#"
@@ -73,6 +80,7 @@ const AnnoucementBar = () => {
 
 const Problems = ({ userId }: { userId: string }) => {
   const [searchValue, setSearchValue] = useState<string>("");
+  const auth = useSelector(selectAuth);
 
   const { data, isLoading } = useQuery({
     queryKey: ["group", "problems", userId, searchValue],
@@ -169,12 +177,17 @@ const Problems = ({ userId }: { userId: string }) => {
   return (
     <Container>
       <div>
-        <div className="capitalize text-xl">
+        <div className="capitalize text-xl mb-5">
           <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0">
             {data?.groupName} Problems
           </h2>
         </div>
-        <AnnoucementBar />
+        {auth.isUserInGroup && (
+          <AnnoucementBar
+            groupName={data?.groupName as string}
+            cutoffNotice={data?.cutoffNotice as string}
+          />
+        )}
         <TableComponent
           isLoading={isLoading}
           columns={columns}

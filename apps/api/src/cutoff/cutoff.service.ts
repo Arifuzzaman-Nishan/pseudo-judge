@@ -5,12 +5,14 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { DateTime } from 'luxon';
 import mongoose from 'mongoose';
 import { CutoffHelperService } from './cutoffhelper.service';
+import { GroupHelperService } from '@/group/utils/groupHelper.service';
 @Injectable()
 export class CutoffService {
   constructor(
     private readonly groupRepository: GroupRepository,
     private readonly problemSubmissionRepository: ProblemSubmissionRepository,
     private readonly cutoffHelperService: CutoffHelperService,
+    private readonly groupHelperService: GroupHelperService,
   ) {}
 
   private readonly logger = new Logger(CutoffService.name);
@@ -80,6 +82,12 @@ export class CutoffService {
           .toJSDate();
 
         group.cutoff.cutoffNumber += group.cutoff.initialCutoffNumber;
+        group.cutoff.cutoffNotice =
+          this.cutoffHelperService.generateCutoffNotice(
+            group.cutoff.cutoffNumber,
+            DateTime.fromJSDate(group.cutoff.cutoffDate),
+          );
+        group.enrollmentKey = this.groupHelperService.generateEnrollmentKey();
 
         await this.groupRepository.findOneAndUpdate(
           {
