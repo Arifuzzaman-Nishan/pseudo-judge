@@ -11,27 +11,18 @@ Pseudo Judge is an innovative, web-based platform designed to transform the land
 - **Group Management**: Admins can create groups, manage user enrollments, and assign problems.
 - **Live Feedback**: Real-time feedback on code submissions, including evaluation of code efficiency, runtime, and memory usage.
 - **User Statistics**: Detailed statistical view for users, tracking individual progress, problem-solving counts, and submission rates.
-- **Responsive Design**: Utilizing modern web technologies for a user-friendly interface and efficient database management.
-
-## Login as Admin
-
-To run this project, you will need to add the following environment variables to your .env file
-
-`Email: adminboss@gmail.com`
-
-`Password: boss1234`
 
 ## User enrollment key
 
 To join the group, you will need teh enrollment key
 
-`Blue-5: 4ru2eohf9cruddg4ilp1pg`
+`Group-1: jazepic3ppkmm074zx7yrr`
 
-`Blue-6: cic306mr1z8y44xp8i3ckc`
+`Group-2: naboifph8bedasv5ea0yyd`
 
-`Blue-7: fsw1xm2btmuwr9i1obmu1`
+`Group-3: epxo4xah9m9q0oia934lr`
 
-`Blue-8: w6akmyoikzc1ord2vywr6h`
+`Group-4: 5498q411bfweet9tnu7i`
 
 ## Tech Stack
 
