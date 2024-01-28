@@ -70,3 +70,7 @@ Start the server
 ## Contact
 
 For any queries or suggestions, feel free to contact arifuzzamannishan@gmail.com.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
